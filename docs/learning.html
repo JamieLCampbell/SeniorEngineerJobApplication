@@ -43,6 +43,16 @@
     </nav>
   </header>
   <main>
+    <section id="source-corrections">
+      <h2>Quarantine and ask the source owner</h2>
+      <p>Our preferred production response is to enforce an agreed source contract and request corrections upstream. For this assessment, we also demonstrate controlled downstream repair with explicit mappings for known phrases.</p>
+      <details><summary>What does quarantine actually mean in our code?</summary><p>Rejected rows go into a separate local rejected.jsonl file with their original values and reasons. They do not enter the cleaned CSV. This is not yet cloud IAM isolation: restricted cloud storage is a planned extension.</p></details>
+      <details><summary>Are we automatically asking anyone to fix it?</summary><p>No. The run generates source_fix_request.json with affected IDs and issues, marked draft_not_sent. An operator still needs to assign the source owner and submit a reviewed ticket. Raw customer payloads stay out of that draft.</p></details>
+      <details><summary>What if the stakeholder wants us to repair it?</summary><p>Agree a precise mapping or obtain authoritative corrected values. Retain the original value and the reason/evidence for the change. We already support the sample's two text phrases; an extended repair audit and strict contract mode are not implemented. Unknown dates and prices still need evidence.</p></details>
+      <p><strong>Check:</strong> the source owner says the file is fixed. Can we close the issue immediately?</p>
+      <details><summary>Reveal the answer</summary><p>No. Revalidate the corrected export, reconcile affected IDs and counts, and publish without duplicating previously accepted records. Only then close the issue. This handoff and closure process is currently manual.</p></details>
+      <p><a href="source-corrections.md">Read both options and the correction workflow</a>.</p>
+    </section>
     <section id="spending-assumption">
       <h2>Spending: an assumption to confirm</h2>
       <p>For the assessment, we assume <strong>OrderAmount is the product's unit price</strong>, so total order value is OrderAmount multiplied by Quantity.</p>

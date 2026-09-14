@@ -37,8 +37,11 @@ The initial accepted dataset requires valid dates and amounts for both planned a
 - `rejected.jsonl`: original row, source record number, all detected reasons and warnings.
 - `duplicates.jsonl`: removed valid repeats and the retained source record number.
 - `report.json`: reconcilable counts and warnings on accepted records. The CLI prints this summary, not raw rejected payloads.
+- `source_fix_request.json`: a draft source-owner handoff with affected IDs/reasons and accepted warnings; no message or ticket is sent.
 
 Source row numbers count CSV records with the header at 1, not physical lines in a multiline CSV. Keep rejected files restricted when working with real customer data.
+
+See [source correction and optional repair](source-corrections.md) for the preferred production policy, the assessment repair option, and the distinction between implemented local quarantine and planned cloud/ticket integration.
 
 ## Sample result
 

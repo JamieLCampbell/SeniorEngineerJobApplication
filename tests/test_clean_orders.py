@@ -93,7 +93,7 @@ class CleaningTests(unittest.TestCase):
         rows = [order(), order(), order(OrderID="2", OrderAmount="")]
         with tempfile.TemporaryDirectory() as folder:
             directory = Path(folder) / "run"
-            write_result(clean_orders(rows), directory)
+            write_result(clean_orders(rows), directory, source_name="source.csv")
             with (directory / "cleaned_orders.csv").open(newline="") as source:
                 cleaned = list(csv.DictReader(source))
             self.assertEqual(cleaned[0]["OrderDate"], "2023-07-01")
@@ -104,6 +104,14 @@ class CleaningTests(unittest.TestCase):
             report = json.loads((directory / "report.json").read_text())
             self.assertEqual(report["input_rows"], 3)
             self.assertEqual(report["accepted_rows"] + report["rejected_rows"] + report["duplicate_rows"], 3)
+            request = json.loads((directory / "source_fix_request.json").read_text())
+            self.assertEqual(request["status"], "draft_not_sent")
+            self.assertEqual(request["source_file"], "source.csv")
+            self.assertIsNone(request["source_owner"])
+            self.assertEqual(request["affected_records"], [
+                {"source_row": 4, "order_id": "2", "reasons": ["OrderAmount:missing"], "warnings": []},
+            ])
+            self.assertNotIn("raw", request["affected_records"][0])
             with self.assertRaises(FileExistsError):
                 write_result(clean_orders(rows), directory)
 
@@ -114,6 +122,14 @@ class CleaningTests(unittest.TestCase):
                 path.write_text(content)
                 with self.assertRaises(ValueError):
                     read_orders(path)
+
+    def test_valid_batch_does_not_request_unnecessary_correction(self):
+        with tempfile.TemporaryDirectory() as folder:
+            directory = Path(folder) / "run"
+            write_result(clean_orders([order()]), directory)
+            request = json.loads((directory / "source_fix_request.json").read_text())
+            self.assertEqual(request["status"], "not_required")
+            self.assertEqual(request["affected_records"], [])
 
 
 if __name__ == "__main__":

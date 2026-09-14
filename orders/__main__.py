@@ -16,7 +16,7 @@ def main():
     args = parser.parse_args()
     try:
         result = clean_orders(read_orders(args.input))
-        write_result(result, args.output_dir)
+        write_result(result, args.output_dir, source_name=args.input.name)
     except (OSError, ValueError, csv.Error) as error:
         parser.exit(1, f"Cleaning failed: {error}\n")
     print(json.dumps(result.summary(), indent=2))

@@ -24,6 +24,8 @@ Use small commits representing complete changes. Subjects describe the change; b
 
 ## Current scope
 
+[Source correction versus downstream repair](docs/source-corrections.md): each cleaning run quarantines rejected rows locally and creates a draft fix request. Submission to a source owner remains manual; no tickets or messages are sent automatically.
+
 [Spending assumptions](docs/spending-metrics.md): treat OrderAmount as unit price for this assessment; in real work, confirm this with a stakeholder before reporting. The cleaner and SQL still need the corresponding total-value changes.
 
 Inspect the supplied data without changing it:

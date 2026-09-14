@@ -19,7 +19,7 @@ def read_orders(path: Path) -> list:
     return rows
 
 
-def write_result(result, directory: Path):
+def write_result(result, directory: Path, source_name: str | None = None):
     # One new directory per run: an accidental rerun must not overwrite evidence.
     directory.mkdir(parents=True, exist_ok=False)
     with (directory / "cleaned_orders.csv").open("w", encoding="utf-8", newline="") as output:
@@ -38,4 +38,24 @@ def write_result(result, directory: Path):
                 }, ensure_ascii=False) + "\n")
     (directory / "report.json").write_text(
         json.dumps(result.summary(), indent=2) + "\n", encoding="utf-8",
+    )
+    # Prepare an owner handoff, not an email/ticket submission. Raw payloads
+    # remain in quarantine; this draft references only the records and issues.
+    correction_request = {
+        "status": "draft_not_sent" if result.rejected else "not_required",
+        "source_file": source_name,
+        "run_id": directory.name,
+        "source_owner": None,
+        "ticket_reference": None,
+        "requested_action": "Confirm the issues and provide a corrected export; do not guess missing facts.",
+        "quarantine_file": "rejected.jsonl",
+        "affected_records": [
+            {"source_row": row.source_row, "order_id": row.raw["OrderID"],
+             "reasons": row.reasons, "warnings": row.warnings}
+            for row in result.rejected
+        ],
+        "accepted_record_warnings": result.summary()["warnings"],
+    }
+    (directory / "source_fix_request.json").write_text(
+        json.dumps(correction_request, indent=2) + "\n", encoding="utf-8",
     )
