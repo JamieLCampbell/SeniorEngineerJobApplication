@@ -43,6 +43,13 @@
     </nav>
   </header>
   <main>
+    <section id="spending-assumption">
+      <h2>Spending: an assumption to confirm</h2>
+      <p>For the assessment, we assume <strong>OrderAmount is the product's unit price</strong>, so total order value is OrderAmount multiplied by Quantity.</p>
+      <p><strong>In a real project, we would confirm this with the stakeholder or source-system owner before reporting.</strong> The sample alone does not prove the meaning. We would also ask how discounts, tax, shipping and refunds are represented.</p>
+      <p>If the field is already the order total, multiplying it would overstate spending. Missing quantity must remain unresolved rather than default to one. These are recorded definitions; the code changes are next.</p>
+      <p><a href="spending-metrics.md">Read the assumptions and agreed metric definitions</a>.</p>
+    </section>
     <section id="cleaning">
       <h2>Python cleaning: convert evidence, preserve uncertainty</h2>
       <p>The functions now parse fields, validate rows, and handle repeated IDs separately from reading and writing files. The same cleaner can later feed a cloud upload without duplicating the rules.</p>

@@ -24,6 +24,8 @@ Use small commits representing complete changes. Subjects describe the change; b
 
 ## Current scope
 
+[Spending assumptions](docs/spending-metrics.md): treat OrderAmount as unit price for this assessment; in real work, confirm this with a stakeholder before reporting. The cleaner and SQL still need the corresponding total-value changes.
+
 Inspect the supplied data without changing it:
 
 ```sh

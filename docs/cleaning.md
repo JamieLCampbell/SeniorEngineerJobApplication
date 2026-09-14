@@ -11,6 +11,8 @@ Choose a new output directory for each run. Existing directories are refused to 
 
 ## Rules and reasons
 
+The table below describes the current implementation. We have now [assumed a unit-price meaning for OrderAmount](spending-metrics.md), subject to stakeholder confirmation in a real project. Requiring quantity for spending and deriving total order value are pending code changes.
+
 | Field/problem | Action | Reason or limitation |
 | --- | --- | --- |
 | Missing OrderID, CustomerID, region, date, or amount | Reject with reasons | These are needed to identify and analyse an order without guessing |

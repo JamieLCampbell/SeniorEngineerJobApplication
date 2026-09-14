@@ -1,5 +1,8 @@
 -- GoogleSQL. Replace PROJECT_ID and DATASET_ID after creating cleaned_orders.
--- Attribution building block only; amount semantics and aggregation are pending.
+-- Attribution building block only; spending aggregation is still to implement.
+-- Assessment assumption: OrderAmount is unit price, so total = amount * quantity.
+-- Confirm with a stakeholder/source owner before reporting in a real project.
+-- See docs/spending-metrics.md; this query only selects region attribution.
 -- Decision 002: historical spending uses the region recorded on each order.
 -- A later customer move must not reassign that order to a new region.
 -- Keep missing regions visible for the cleaning/quality policy; do not fill
