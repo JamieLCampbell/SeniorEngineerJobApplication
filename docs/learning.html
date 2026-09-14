@@ -37,7 +37,7 @@
     <p class="muted">YOUR PROJECT LEARNING COMPANION</p>
     <h1>Understand the decisions<br>as we make them</h1>
     <p>Work through one decision at a time. Explore alternatives, explain the consequences in your own words, then discuss what belongs in the project.</p>
-    <p class="status">Current decision: freshness by source · proposed, not agreed</p>
+    <p class="status">Decided: use the order's recorded region for historical spending. Broader CRM freshness remains open.</p>
     <nav class="links" aria-label="Notebook sections">
       <a href="#problem">The problem</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
     </nav>
@@ -69,7 +69,12 @@
       <details><summary>When would we change the recommendation?</summary><p>If CRM changes must affect immediate decisions, we would investigate incremental or streaming CRM ingestion. If all consumers tolerate longer delays, we would examine whether scheduled batches meet the assessment’s real-time expectation. If a source cannot expose changes reliably, we must resolve extraction first.</p></details>
     </section>
     <section id="challenge">
-      <h2>3. Can you spot the consequence?</h2>
+      <h2>3. Our decision: use the order's region</h2>
+      <p>Historical regional spending uses <strong>OrderRegion</strong> directly. We will not replace it with current CRM region, so a customer moving later does not reassign an earlier sale.</p>
+      <details><summary>Weigh the alternatives</summary><p><strong>Order region:</strong> directly available and stable when customers move, but inherits errors in the order source. This is our choice for historical sales.</p><p><strong>Current CRM region:</strong> useful for today's customer segmentation, but moves past spending between regions and depends on snapshot freshness.</p><p><strong>CRM region at order time:</strong> useful when historical customer attributes are required, but needs dated history, valid timestamps, and checks that each order matches no more than one history row.</p></details>
+      <p>We will leave a missing order region unresolved for the quality policy rather than fill it from current CRM. A deliberate correction to the source order is different from a customer moving.</p>
+      <p><a href="decisions/002-order-region-attribution.md">Read Decision 002</a> or <a href="../sql/order_region_attribution.sql">see the alternative documented beside the SQL</a>.</p>
+      <h3>Check the reasoning</h3>
       <p>A customer's CRM region changes at 09:30. Our latest CRM snapshot is from 09:00. Their new order arrives at 10:02 and is processed immediately.</p>
       <p><strong>If we join that order to the CRM snapshot, is its region current?</strong></p>
       <details><summary>Reveal the reasoning after you have tried</summary><p>No. Fast order processing does not make the CRM snapshot current. We have combined a fresh event with an older attribute.</p><p>We could refresh CRM more often, capture changes, or use the region recorded on the order if the metric is about where the order occurred. The last option changes the meaning of the analysis, not just the technology.</p><p>The sample calls the field <strong>OrderRegion</strong>. We should not silently substitute a customer's current region. This is a concrete example of a decision we must justify before writing a transformation.</p></details>

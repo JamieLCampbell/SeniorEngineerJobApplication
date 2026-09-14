@@ -32,6 +32,8 @@ A new order arrives at 10:02. Its customer's region changed in CRM at 09:30, but
 
 Possible responses: refresh CRM more often, capture CRM changes, or use the region recorded on the order if that is the intended metric. These alternatives have different business meanings. The sample field is OrderRegion; we must not silently replace it with current customer region.
 
+Resolved for regional spending in [Decision 002](002-order-region-attribution.md): use the region recorded on the order, with no CRM join. CRM freshness therefore does not affect this metric. Other CRM-dependent consumers still need their own freshness requirements.
+
 ## What would change the recommendation?
 
 - CRM changes must affect decisions immediately: evaluate an incremental or streaming CRM route.
@@ -41,7 +43,7 @@ Possible responses: refresh CRM more often, capture CRM changes, or use the regi
 
 ## Next discussion
 
-Can the design use a batch CRM snapshot while keeping clicks and order changes fresh? If so, what analytical use would make an older CRM snapshot unacceptable?
+Which remaining consumers need CRM enrichment, and how old can their customer attributes be? Regional order spending no longer depends on that answer.
 
 ## Evidence and limits
 

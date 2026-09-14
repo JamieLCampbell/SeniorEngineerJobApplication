@@ -26,7 +26,7 @@ Source: the five assessment photographs supplied on 14 September 2026. This is a
 | B5 | Save cleaned data in Cloud Storage | Upload code and evidence of a successful run | Pending |
 | B6 | Create a dataset/table and load from Cloud Storage | BigQuery schema, load procedure, and run evidence | Pending |
 | B7 | Calculate a rolling 30-day average of customer spending with a window function | SQL and checks against hand-calculated cases | Metric definition pending |
-| B8 | Rank regions by average spending | SQL and checks of aggregation grain | Metric definition pending |
+| B8 | Rank regions by average spending | SQL and checks of aggregation grain | Order-region attribution decided (002); amount and denominator pending |
 
 ## Submission
 
