@@ -1,12 +1,12 @@
 # Senior Cloud Data Engineer assessment
 
-Working submission for the supplied GCP assessment. The architecture draft records our choices; Part 2 includes Python cleaning and a verified Cloud Storage-to-BigQuery dev batch.
+Working submission for the supplied GCP assessment. The final Part 1 architecture separates the brief's requirements from our choices and assumptions; Part 2 includes Python cleaning and a verified Cloud Storage-to-BigQuery dev batch.
 
 ## Work through the project
 
 Open the [architecture decision notebook](docs/learning.html) in a browser. It works offline and focuses on one real project decision at a time, with alternatives, worked examples, an understanding check, and space to explain your reasoning. Browser notes can be downloaded; they do not change repository decisions.
 
-Start with the [assessment requirements](docs/assessment-requirements.md), [logical architecture draft](docs/architecture.md), and [source freshness decision](docs/decisions/001-source-freshness.md). The earlier slide deck remains in `docs/first-principles.html` as a historical draft; the notebook replaces it as the learning entry point.
+Start with the [assessment requirements](docs/assessment-requirements.md), [final architecture and diagram](docs/architecture.md), and [source freshness decision](docs/decisions/001-source-freshness.md). The earlier slide deck remains in `docs/first-principles.html` as a historical draft; the notebook replaces it as the learning entry point.
 
 Accepted: [historical spending uses the order's recorded region](docs/decisions/002-order-region-attribution.md). The [attribution SQL](sql/order_region_attribution.sql) includes the CRM alternatives beside the implementation. It is a building block with table placeholders, not the completed spending aggregation.
 
@@ -16,7 +16,7 @@ Accepted: [clickstream through a collection endpoint, Pub/Sub, and Dataflow](doc
 
 Accepted: [CRM exports through Cloud Storage and BigQuery staging](docs/decisions/005-crm-batch.md), with SQL validation before publication. Export cadence and retention remain open.
 
-Accepted: [Composer for platform batch coordination](docs/decisions/006-batch-orchestration.md). The small Part 2 implementation will run manually without a Composer environment; a simpler scheduled workflow is documented as an alternative.
+Accepted: [Composer for platform batch coordination](docs/decisions/006-batch-orchestration.md). The small Part 2 implementation runs manually without a Composer environment; a simpler scheduled workflow is documented as an alternative.
 
 ## Review approach
 

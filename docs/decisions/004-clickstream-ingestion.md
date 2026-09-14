@@ -24,6 +24,6 @@ Handle known invalid payloads in the pipeline with explicit rejected-record outp
 
 ## Scope
 
-This decision describes Part 1. The supplied Part 2 CSV remains a separate Python batch implementation. Archive storage and replay, exact schemas, retention, latency targets, and deployment sizing are still to be decided.
+This decision describes Part 1. The supplied Part 2 CSV remains a separate Python batch implementation. The final architecture selects a separate Pub/Sub Cloud Storage subscription for the archive. Replay implementation, exact schemas, retention, latency targets and deployment sizing still require source and consumer requirements.
 
 Sources: [BigQuery subscriptions and the Dataflow alternative](https://docs.cloud.google.com/pubsub/docs/bigquery), [Pub/Sub to BigQuery template guidance](https://docs.cloud.google.com/dataflow/docs/guides/templates/provided/pubsub-subscription-to-bigquery), [Dataflow's Pub/Sub integration guidance](https://docs.cloud.google.com/dataflow/docs/concepts/streaming-with-cloud-pubsub).

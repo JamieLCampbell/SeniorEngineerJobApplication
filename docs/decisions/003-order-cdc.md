@@ -13,7 +13,7 @@ Working route: **source database → Datastream → BigQuery replica → analyti
 - CDC depends on the database engine/version, replication configuration, permissions, and connectivity. These are unknown in the brief and must be checked before deployment.
 - Database changes describe rows, not necessarily business events such as “payment accepted”. Application events would be preferable if those meanings were required; reliable publishing would then need its own design.
 - The working design uses merge mode with a supported primary key. Updates and deletes change the replica. It is not an immutable order history or event archive. If audit history or historical reconstruction is required, revisit append-only capture or archival explicitly.
-- Replication does not clean the data. Keep the replica separate from analytical transformations, and monitor replication lag and errors. No numerical freshness guarantee has been established.
+- Replication does not clean the data. Keep the replica separate from analytical transformations. Start with validated SQL views for curated order reads so a batch schedule does not add reporting delay; materialise expensive transformations only when cost and acceptable refresh lag justify it. Monitor replication lag and errors. No numerical freshness guarantee has been established.
 
 Pub/Sub and Dataflow serve the separate [clickstream route](004-clickstream-ingestion.md); they are not required intermediaries for this direct CDC route.
 

@@ -6,13 +6,13 @@ Source: the five assessment photographs supplied on 14 September 2026. This is a
 
 | ID | Requirement | Evidence we will produce | Status |
 | --- | --- | --- | --- |
-| A1 | Design ingestion, processing, storage, and querying for e-commerce analytics on GCP | Architecture diagram showing the data routes | Initial logical outline |
-| A2 | Cover transactional databases, clickstream, and CRM | Source routes and source integration assumptions | Routes selected (003–005); source compatibility and CRM export interface unresolved |
-| A3 | Consider real-time ingestion and batch processing | Explanation of which sources use each route and why | Mixed approach accepted; numeric targets open |
-| A4 | Include services such as Pub/Sub, Dataflow, BigQuery, Cloud Storage, and Composer | Explain each service's role and alternatives | Roles and alternatives recorded, including Composer (006); deployment details open |
+| A1 | Design ingestion, processing, storage, and querying for e-commerce analytics on GCP | Architecture diagram showing the data routes | Final diagram, standalone SVG and rationale in architecture.md |
+| A2 | Cover transactional databases, clickstream, and CRM | Source routes and source integration assumptions | All three routes justified; source compatibility and CRM interface explicitly listed as assumptions |
+| A3 | Consider real-time ingestion and batch processing | Explanation of which sources use each route and why | Mixed approach justified; numerical targets explicitly require stakeholder confirmation |
+| A4 | Include services such as Pub/Sub, Dataflow, BigQuery, Cloud Storage, and Composer | Explain each service's role and alternatives | All named services mapped to roles, with alternatives and deployment boundaries |
 | A5 | Make data available to analysts and machine learning models | Curated consumption layer in the diagram | Analysts and offline ML use curated tables; online serving excluded |
-| A6 | Justify scalability, cost-efficiency, and security | Decision records and operational controls | Design controls in operations.md; thresholds and sizing unverified |
-| A7 | Discuss latency, quality, and performance trade-offs | Consequences and revisit conditions in each decision | Started |
+| A6 | Justify scalability, cost-efficiency, and security | Decision records and operational controls | Scale/cost/security trade-offs summarised in architecture.md; detailed controls in operations.md; sizing unmeasured |
+| A7 | Discuss latency, quality, and performance trade-offs | Consequences and revisit conditions in each decision | Covered in final rationale, alternatives and assumption table |
 | A8 | Optional, preferred infrastructure as code | Reproducible provisioning if included | Terraform dev applied and drift-free after live runs; pre/prod roots validated only |
 
 ## Part 2: implementation (suggested three hours)
