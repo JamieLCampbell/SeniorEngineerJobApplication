@@ -13,7 +13,7 @@ Source: the five assessment photographs supplied on 14 September 2026. This is a
 | A5 | Make data available to analysts and machine learning models | Curated consumption layer in the diagram | Analysts and offline ML use curated tables; online serving excluded |
 | A6 | Justify scalability, cost-efficiency, and security | Decision records and operational controls | Design controls in operations.md; thresholds and sizing unverified |
 | A7 | Discuss latency, quality, and performance trade-offs | Consequences and revisit conditions in each decision | Started |
-| A8 | Optional, preferred infrastructure as code | Reproducible provisioning if included | Scope not yet chosen |
+| A8 | Optional, preferred infrastructure as code | Reproducible provisioning if included | Terraform dev/pre/prod roots added for Part 2 resources; validated, not applied |
 
 ## Part 2: implementation (suggested three hours)
 

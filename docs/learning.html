@@ -37,12 +37,24 @@
     <p class="muted">YOUR PROJECT LEARNING COMPANION</p>
     <h1>Understand the decisions<br>as we make them</h1>
     <p>Work through one decision at a time. Explore alternatives, explain the consequences in your own words, then discuss what belongs in the project.</p>
-    <p class="status">The architecture now includes operating controls. Python starts with inspecting the original sample; cleaning rules are next.</p>
+    <p class="status">Terraform now defines dev/pre/prod for the batch foundation. Configurations are tested locally; no environments are deployed.</p>
     <nav class="links" aria-label="Notebook sections">
-      <a href="#operations">Latest: operating controls</a><a href="#orchestration">Orchestration</a><a href="#crm">CRM batches</a><a href="#clickstream">Clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
+      <a href="#terraform">Latest: dev/pre/prod</a><a href="#operations">Operating controls</a><a href="#orchestration">Orchestration</a><a href="#crm">CRM batches</a><a href="#clickstream">Clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
     </nav>
   </header>
   <main>
+    <section id="terraform">
+      <h2>Terraform: repeat the design safely</h2>
+      <p>Terraform describes the resources we want. A <strong>plan</strong> shows proposed changes; <strong>apply</strong> carries them out. We have written and locally tested the configuration, not applied it to GCP.</p>
+      <p><strong>Dev</strong> is for experiments. <strong>Pre</strong> is a rehearsal using the same code and production-style guards. <strong>Prod</strong> receives the reviewed revision. Each uses its own project, state, data, and identity.</p>
+      <details><summary>Why one module and three small entry points?</summary><p>The module defines the bucket, dataset, table and loader once. Each environment supplies its project and policy values. That reduces drift while making the target visible in commands. We accept a little repeated root configuration rather than hiding the environment in a selected workspace.</p></details>
+      <details><summary>What is Terraform state?</summary><p>State maps the code to real cloud resources. Each environment needs its own private state. We use a separate pre-existing GCS state bucket per environment with locking and versioning, and keep state out of Git. Resource names alone do not prevent one environment's identity from accessing another: project IAM must provide that boundary.</p></details>
+      <details><summary>Why does pre have production-style protections?</summary><p>We want to discover replacement and deployment problems before prod. Dev permits deliberate table replacement; pre and prod guard table and bucket deletion through Terraform. Those guards do not stop all API deletes or scheduled object expiry. Their scope matters.</p></details>
+      <details><summary>Why are retention values different?</summary><p>The dev and pre examples use short-lived synthetic data: seven and fourteen days. Production requires an explicit policy; the example of ninety days is only illustrative. Soft delete retains deleted objects for another period, so lifecycle expiry is not a promise of immediate erasure.</p></details>
+      <p><strong>Check your understanding:</strong> if the same code works in dev, can we apply its saved plan directly to prod?</p>
+      <details><summary>Reveal the answer</summary><p>No. Promote the same Git revision, then create and review a new plan against prod's project, inputs, and state. The dev plan targets dev resources.</p></details>
+      <p><a href="../infra/README.md">Read the setup, scope, and promotion instructions</a>. Only the batch foundation is included; the full streaming architecture is not being provisioned.</p>
+    </section>
     <section id="operations">
       <h2>Can we trust it when something fails?</h2>
       <p>Our operating choices are deliberately small: separate service identities, restricted source data, useful alerts, retained inputs for recovery, and limits on unnecessary spending.</p>

@@ -1,0 +1,9 @@
+[
+  {"name": "OrderID", "type": "INTEGER", "mode": "NULLABLE"},
+  {"name": "CustomerID", "type": "INTEGER", "mode": "NULLABLE"},
+  {"name": "OrderRegion", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "OrderDate", "type": "DATE", "mode": "NULLABLE"},
+  {"name": "OrderAmount", "type": "NUMERIC", "mode": "NULLABLE"},
+  {"name": "ProductID", "type": "INTEGER", "mode": "NULLABLE"},
+  {"name": "Quantity", "type": "INTEGER", "mode": "NULLABLE"}
+]

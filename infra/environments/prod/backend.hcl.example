@@ -1,0 +1,2 @@
+# Existing, private, versioned state bucket in this environment's project.
+bucket = "REPLACE_WITH_PROD_STATE_BUCKET"

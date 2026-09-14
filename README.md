@@ -35,6 +35,6 @@ These commands use only Python's standard library. The CSV preserves the supplie
 
 - Part 1: discuss assumptions, compare architecture options, then produce a diagram and decision record.
 - Part 2: build and verify Python cleaning, Cloud Storage output, BigQuery loading, and analytical SQL.
-- Optional infrastructure as code: decide after the implementation scope is agreed.
+- [Terraform dev/pre/prod](infra/README.md): shared Part 2 infrastructure module with separate environment roots and state. Validated locally; not deployed.
 
 No cloud resources have been provisioned by this repository. Cloud execution and streaming behaviour have not been validated. Completed changes are pushed to the private [GitHub repository](https://github.com/JamieLCampbell/SeniorEngineerJobApplication) on `codex/architecture-learning`.

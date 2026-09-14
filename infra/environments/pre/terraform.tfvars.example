@@ -1,0 +1,5 @@
+# Copy to terraform.tfvars and confirm these values before planning.
+project_id = "REPLACE_WITH_PRE_PROJECT_ID"
+location = "europe-west2"
+# Synthetic test data only.
+file_retention_days = 14
