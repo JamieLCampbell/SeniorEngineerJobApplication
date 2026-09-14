@@ -1,6 +1,6 @@
 # 005: Land CRM exports before loading reports
 
-Status: accepted for the assessment architecture on 14 September 2026. Not deployed.
+Status: accepted for the assessment architecture on 14 September 2026. A [synthetic Composer demonstration](../platform-verification.md) verified valid publication and preservation of the last good snapshot after duplicate and stale exports.
 
 **Route: CRM export → Cloud Storage → BigQuery staging → SQL validation → reporting tables.**
 

@@ -59,6 +59,27 @@ class CloudOrdersTests(unittest.TestCase):
         self.assertFalse(config.use_query_cache)
         self.assertEqual(details["bytes_billed"], 10)
 
+    def test_load_job_id_is_available_before_a_wait_timeout(self):
+        client = Mock()
+        job = client.load_table_from_uri.return_value
+        job.job_id = "submitted-load"
+        job.result.side_effect = TimeoutError("wait expired")
+        captured = []
+        with self.assertRaises(TimeoutError):
+            load_orders(client, "gs://test/file.csv", "p.d.t", [],
+                        on_submit=lambda job: captured.append(job.job_id))
+        self.assertEqual(captured, ["submitted-load"])
+
+    def test_query_job_id_is_available_before_a_wait_timeout(self):
+        client = Mock()
+        job = Mock(job_id="submitted-query")
+        job.result.side_effect = TimeoutError("wait expired")
+        client.query.side_effect = [Mock(total_bytes_processed=1), job]
+        captured = []
+        with self.assertRaises(TimeoutError):
+            run_query(client, "SELECT 1", on_submit=lambda job: captured.append(job.job_id))
+        self.assertEqual(captured, ["submitted-query"])
+
     def test_all_rejected_batch_does_not_touch_cloud(self):
         with tempfile.TemporaryDirectory() as directory:
             source = Path(directory) / "bad.csv"

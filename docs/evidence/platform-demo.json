@@ -1,0 +1,561 @@
+{
+  "date": "2026-09-14",
+  "project": "data-enginner-job-app",
+  "region": "europe-west2",
+  "functional_checks": "passed",
+  "cleanup": {
+    "checked_at": "2026-09-14T13:17:04.655347+00:00",
+    "deleted": {
+      "composer": "not_found_404",
+      "source_database": "not_found_404",
+      "datastream": "not_found_404",
+      "cloud_run_job": "not_found_404",
+      "collector": "not_found_404",
+      "topic": "not_found_404",
+      "demo_bucket": "not_found_404",
+      "composer_bucket": "not_found_404",
+      "replication_secret": "not_found_404",
+      "images": "not_found_404",
+      "demo_dataset": "not_found_404",
+      "cdc_dataset": "not_found_404",
+      "network": "not_found_404"
+    },
+    "dataflow_state": "JOB_STATE_CANCELLED",
+    "retained": {
+      "orders_bucket": "present",
+      "state_bucket": "present",
+      "orders_table": "present",
+      "order_rows": 6
+    },
+    "terraform_states": {
+      "platform-demo": "empty",
+      "platform-run": "empty"
+    },
+    "retained_dev_plan": "no_changes"
+  },
+  "versions": {
+    "container_digest": "sha256:6f2e5d6495c2dd1e7d2d664dce76817e401b84d1e6e8ddecdd37dca76c1f038f",
+    "cloud_build_id": "35fc6c4d-9936-4f3a-a8bb-741e9605f323",
+    "dataflow_template": "gs://dataflow-templates-europe-west2/2026-09-01-00_RC00/PubSub_Subscription_to_BigQuery",
+    "dataflow_job_id": "2026-09-14_05_29_51-10151398287747062658",
+    "deployed_udf_sha256": "40ab13cb662e03ed890c20d2518e34a821603163667199855810095b8d077470",
+    "composer_image": "composer-3-airflow-2.11.1-build.19"
+  },
+  "batch": {
+    "executions": [
+      {
+        "name": "projects/data-enginner-job-app/locations/europe-west2/jobs/assessment-orders-cloud/executions/assessment-orders-cloud-wrzg7",
+        "createTime": "2026-09-14T13:05:24.077789Z",
+        "startTime": "2026-09-14T13:05:26.387193Z",
+        "completionTime": "2026-09-14T13:05:51.072450Z",
+        "succeededCount": 1,
+        "failedCount": null
+      },
+      {
+        "name": "projects/data-enginner-job-app/locations/europe-west2/jobs/assessment-orders-cloud/executions/assessment-orders-cloud-jkpmr",
+        "createTime": "2026-09-14T13:01:38.792583Z",
+        "startTime": "2026-09-14T13:01:42.374941Z",
+        "completionTime": "2026-09-14T13:02:03.108870Z",
+        "succeededCount": 1,
+        "failedCount": null
+      },
+      {
+        "name": "projects/data-enginner-job-app/locations/europe-west2/jobs/assessment-orders-cloud/executions/assessment-orders-cloud-tmrrl",
+        "createTime": "2026-09-14T12:55:41.900729Z",
+        "startTime": "2026-09-14T12:55:44.358643Z",
+        "completionTime": "2026-09-14T12:56:15.011019Z",
+        "succeededCount": 1,
+        "failedCount": null
+      },
+      {
+        "name": "projects/data-enginner-job-app/locations/europe-west2/jobs/assessment-orders-cloud/executions/assessment-orders-cloud-4d6mf",
+        "createTime": "2026-09-14T12:37:52.206153Z",
+        "startTime": "2026-09-14T12:37:56.310072Z",
+        "completionTime": "2026-09-14T12:38:27.209049Z",
+        "succeededCount": 1,
+        "failedCount": null
+      }
+    ],
+    "final_run": {
+      "status": "complete",
+      "run_id": "52dde5a6065842c6bd4a3ba3c8950857",
+      "project": "data-enginner-job-app",
+      "location": "europe-west2",
+      "table": "data-enginner-job-app.orders_dev.cleaned_orders",
+      "service_account": null,
+      "counts": {
+        "input_rows": 10,
+        "accepted_rows": 6,
+        "rejected_rows": 4,
+        "duplicate_rows": 0,
+        "warnings": [
+          {
+            "source_row": 5,
+            "order_id": 104,
+            "warnings": [
+              "ProductID:missing"
+            ]
+          },
+          {
+            "source_row": 10,
+            "order_id": 109,
+            "warnings": [
+              "ProductID:missing"
+            ]
+          }
+        ]
+      },
+      "uri": "gs://data-enginner-job-app-orders-dev/accepted/52dde5a6065842c6bd4a3ba3c8950857/cleaned_orders.csv",
+      "load_job_id": "a3d822be-512a-4c33-884a-57edfbaa6a30",
+      "loaded_rows": 6,
+      "queries": {
+        "customer_rolling_spending": {
+          "job_id": "31ed002f-05c0-4cb3-90df-7e5f5a520bab",
+          "estimated_bytes": 240,
+          "bytes_processed": 240,
+          "bytes_billed": 10485760,
+          "maximum_bytes_billed": 10485760
+        },
+        "regional_spending": {
+          "job_id": "dd5c5f04-64ce-43ba-96d9-eebfa82c22e6",
+          "estimated_bytes": 160,
+          "bytes_processed": 160,
+          "bytes_billed": 10485760,
+          "maximum_bytes_billed": 10485760
+        }
+      }
+    },
+    "verification": {
+      "status": "passed",
+      "checks": [
+        "six exact stored totals",
+        "regional averages and counts",
+        "sample rolling averages",
+        "calendar boundary, peers, gaps and customer isolation",
+        "NUMERIC precision"
+      ],
+      "queries": {
+        "stored_orders": {
+          "job_id": "2dfec7c9-d0f9-42e0-b257-bea85445664d",
+          "estimated_bytes": 144,
+          "bytes_processed": 144,
+          "bytes_billed": 10485760,
+          "maximum_bytes_billed": 10485760
+        },
+        "calendar_boundary": {
+          "job_id": "40cf3f7e-d597-49d1-96b3-285022eafa8a",
+          "estimated_bytes": 0,
+          "bytes_processed": 0,
+          "bytes_billed": 0,
+          "maximum_bytes_billed": 10485760
+        },
+        "numeric_precision": {
+          "job_id": "978510bb-5fb4-4d95-ac1c-40c673fb4ea6",
+          "estimated_bytes": 0,
+          "bytes_processed": 0,
+          "bytes_billed": 0,
+          "maximum_bytes_billed": 10485760
+        }
+      }
+    },
+    "classification": {
+      "input_rows": 10,
+      "accepted_rows": 6,
+      "rejected_rows": 4,
+      "duplicate_rows": 0,
+      "warnings": [
+        {
+          "source_row": 5,
+          "order_id": 104,
+          "warnings": [
+            "ProductID:missing"
+          ]
+        },
+        {
+          "source_row": 10,
+          "order_id": 109,
+          "warnings": [
+            "ProductID:missing"
+          ]
+        }
+      ]
+    }
+  },
+  "collector": {
+    "unauthenticated_status": 403,
+    "published": [
+      {
+        "event_id": "demo-view-1",
+        "status": 202,
+        "response": {
+          "message_id": "21351188215174438"
+        }
+      },
+      {
+        "event_id": "demo-view-1",
+        "status": 202,
+        "response": {
+          "message_id": "21351188215174503"
+        }
+      },
+      {
+        "event_id": "demo-purchase-2",
+        "status": 202,
+        "response": {
+          "message_id": "21351188215174941"
+        }
+      },
+      {
+        "event_id": "demo-invalid-3",
+        "status": 202,
+        "response": {
+          "message_id": "21351188215175006"
+        }
+      }
+    ]
+  },
+  "streaming": {
+    "events": {
+      "job_id": "43a1da1e-7199-49dd-b938-e5ffb853424b",
+      "rows": [
+        {
+          "event_id": "demo-purchase-2",
+          "customer_id": "2",
+          "event_type": "purchase",
+          "event_time": "2026-09-14T12:01:00Z"
+        },
+        {
+          "event_id": "demo-view-1",
+          "customer_id": "1",
+          "event_type": "view",
+          "event_time": "2026-09-14T12:00:00Z"
+        },
+        {
+          "event_id": "demo-view-1",
+          "customer_id": "1",
+          "event_type": "view",
+          "event_time": "2026-09-14T12:00:00Z"
+        }
+      ]
+    },
+    "events_curated": {
+      "job_id": "f54178cd-3071-4c6c-ba09-7bdc8ea5ae40",
+      "rows": [
+        {
+          "event_id": "demo-purchase-2",
+          "customer_id": "2",
+          "event_type": "purchase",
+          "event_time": "2026-09-14T12:01:00Z"
+        },
+        {
+          "event_id": "demo-view-1",
+          "customer_id": "1",
+          "event_type": "view",
+          "event_time": "2026-09-14T12:00:00Z"
+        }
+      ]
+    },
+    "rejected_events": {
+      "job_id": "a4ff3d89-be84-4ca6-97f7-3d33f4e6feae",
+      "rows": [
+        {
+          "timestamp": "2026-09-14 12:39:55.322000+00:00",
+          "payloadString": "{\"event_id\": \"demo-invalid-3\", \"customer_id\": \"3\", \"event_type\": \"invalid\", \"event_time\": \"2026-09-14T12:02:00Z\"}",
+          "errorMessage": "Error: unsupported:event_type in <eval> at line number 13 at column number 4"
+        }
+      ]
+    },
+    "archive": [
+      {
+        "object": "events/2026-09-14T12:39:55+00:00_1cbef7",
+        "payload": {
+          "event_id": "demo-purchase-2",
+          "customer_id": "2",
+          "event_type": "purchase",
+          "event_time": "2026-09-14T12:01:00Z"
+        }
+      },
+      {
+        "object": "events/2026-09-14T12:39:55+00:00_1fe6a7",
+        "payload": {
+          "event_id": "demo-view-1",
+          "customer_id": "1",
+          "event_type": "view",
+          "event_time": "2026-09-14T12:00:00Z"
+        }
+      },
+      {
+        "object": "events/2026-09-14T12:39:55+00:00_590ec8",
+        "payload": {
+          "event_id": "demo-view-1",
+          "customer_id": "1",
+          "event_type": "view",
+          "event_time": "2026-09-14T12:00:00Z"
+        }
+      },
+      {
+        "object": "events/2026-09-14T12:39:55+00:00_a462f0",
+        "payload": {
+          "event_id": "demo-invalid-3",
+          "customer_id": "3",
+          "event_type": "invalid",
+          "event_time": "2026-09-14T12:02:00Z"
+        }
+      }
+    ]
+  },
+  "cdc": {
+    "initial": {
+      "job_id": "ee84f324-6bdb-4ea5-9046-123f8da695e0",
+      "rows": [
+        {
+          "order_id": 201,
+          "customer_id": 1,
+          "unit_price": "150",
+          "quantity": 1
+        },
+        {
+          "order_id": 202,
+          "customer_id": 2,
+          "unit_price": "100",
+          "quantity": 2
+        },
+        {
+          "order_id": 203,
+          "customer_id": 3,
+          "unit_price": "350",
+          "quantity": 4
+        }
+      ]
+    },
+    "changed": {
+      "job_id": "bc28abc1-39e1-48ba-8aae-e88c2ca3ece1",
+      "rows": [
+        {
+          "order_id": 201,
+          "customer_id": 1,
+          "unit_price": "175",
+          "quantity": 1
+        },
+        {
+          "order_id": 203,
+          "customer_id": 3,
+          "unit_price": "350",
+          "quantity": 4
+        },
+        {
+          "order_id": 204,
+          "customer_id": 2,
+          "unit_price": "50",
+          "quantity": 3
+        }
+      ]
+    }
+  },
+  "crm": {
+    "successful_run": {
+      "run_id": "demo-complete",
+      "tasks": [
+        {
+          "task_id": "export_ready",
+          "state": "success",
+          "start_date": "2026-09-14T13:05:05.630816+00:00",
+          "end_date": "2026-09-14T13:05:06.506282+00:00",
+          "try_number": 1
+        },
+        {
+          "task_id": "load_staging",
+          "state": "success",
+          "start_date": "2026-09-14T13:05:09.713502+00:00",
+          "end_date": "2026-09-14T13:05:13.062624+00:00",
+          "try_number": 1
+        },
+        {
+          "task_id": "validate_and_publish",
+          "state": "success",
+          "start_date": "2026-09-14T13:05:15.931720+00:00",
+          "end_date": "2026-09-14T13:05:20.112506+00:00",
+          "try_number": 1
+        },
+        {
+          "task_id": "run_orders_batch",
+          "state": "success",
+          "start_date": "2026-09-14T13:05:22.624165+00:00",
+          "end_date": "2026-09-14T13:06:03.386720+00:00",
+          "try_number": 1
+        }
+      ]
+    },
+    "duplicate_run": {
+      "run_id": "demo-duplicate",
+      "tasks": [
+        {
+          "task_id": "validate_and_publish",
+          "state": "failed",
+          "start_date": "2026-09-14T12:59:30.919668+00:00",
+          "end_date": "2026-09-14T12:59:33.059950+00:00",
+          "try_number": 1
+        },
+        {
+          "task_id": "export_ready",
+          "state": "success",
+          "start_date": "2026-09-14T12:59:22.153849+00:00",
+          "end_date": "2026-09-14T12:59:23.405018+00:00",
+          "try_number": 1
+        },
+        {
+          "task_id": "load_staging",
+          "state": "success",
+          "start_date": "2026-09-14T12:59:25.546912+00:00",
+          "end_date": "2026-09-14T12:59:28.261110+00:00",
+          "try_number": 1
+        },
+        {
+          "task_id": "run_orders_batch",
+          "state": "upstream_failed",
+          "start_date": "2026-09-14T12:59:33.273041+00:00",
+          "end_date": "2026-09-14T12:59:33.273041+00:00",
+          "try_number": 0
+        }
+      ]
+    },
+    "stale_run": {
+      "run_id": "demo-stale",
+      "tasks": [
+        {
+          "task_id": "load_staging",
+          "state": "success",
+          "start_date": "2026-09-14T13:00:20.610836+00:00",
+          "end_date": "2026-09-14T13:00:23.569983+00:00",
+          "try_number": 1
+        },
+        {
+          "task_id": "validate_and_publish",
+          "state": "failed",
+          "start_date": "2026-09-14T13:00:27.609287+00:00",
+          "end_date": "2026-09-14T13:00:31.014932+00:00",
+          "try_number": 1
+        },
+        {
+          "task_id": "run_orders_batch",
+          "state": "upstream_failed",
+          "start_date": "2026-09-14T13:00:31.324559+00:00",
+          "end_date": "2026-09-14T13:00:31.324559+00:00",
+          "try_number": 0
+        },
+        {
+          "task_id": "export_ready",
+          "state": "success",
+          "start_date": "2026-09-14T13:00:17.263815+00:00",
+          "end_date": "2026-09-14T13:00:18.266724+00:00",
+          "try_number": 1
+        }
+      ]
+    },
+    "failure_reasons": {
+      "demo-duplicate": {
+        "expected_failure": "Invalid or incomplete CRM snapshot",
+        "observed": true
+      },
+      "demo-stale": {
+        "expected_failure": "Older snapshot must not replace newer data",
+        "observed": true
+      }
+    },
+    "initial_snapshot": {
+      "job_id": "2750414c-b95c-453e-a858-52640b57f99c",
+      "rows": [
+        {
+          "CustomerID": 1,
+          "CustomerRegion": "Yorkshire",
+          "SnapshotDate": "2026-09-14"
+        },
+        {
+          "CustomerID": 2,
+          "CustomerRegion": "Tyne & Wear",
+          "SnapshotDate": "2026-09-14"
+        },
+        {
+          "CustomerID": 3,
+          "CustomerRegion": "London",
+          "SnapshotDate": "2026-09-14"
+        }
+      ]
+    },
+    "after_duplicate": {
+      "job_id": "c581e7ce-774a-490d-8bae-46ce0ec8a9cd",
+      "rows": [
+        {
+          "CustomerID": 1,
+          "CustomerRegion": "Yorkshire",
+          "SnapshotDate": "2026-09-14"
+        },
+        {
+          "CustomerID": 2,
+          "CustomerRegion": "Tyne & Wear",
+          "SnapshotDate": "2026-09-14"
+        },
+        {
+          "CustomerID": 3,
+          "CustomerRegion": "London",
+          "SnapshotDate": "2026-09-14"
+        }
+      ]
+    },
+    "after_stale": {
+      "job_id": "845dfe9f-1446-401c-8459-58c3d6a32088",
+      "rows": [
+        {
+          "CustomerID": 1,
+          "CustomerRegion": "Yorkshire",
+          "SnapshotDate": "2026-09-14"
+        },
+        {
+          "CustomerID": 2,
+          "CustomerRegion": "Tyne & Wear",
+          "SnapshotDate": "2026-09-14"
+        },
+        {
+          "CustomerID": 3,
+          "CustomerRegion": "London",
+          "SnapshotDate": "2026-09-14"
+        }
+      ]
+    }
+  },
+  "analytics": {
+    "job_id": "36110e51-a2eb-44c3-abc3-a6881c9ad274",
+    "rows": [
+      {
+        "order_id": 201,
+        "customer_id": 1,
+        "order_region": "Yorkshire",
+        "order_date": "2026-09-14",
+        "total_order_value": "175",
+        "current_customer_region": "Yorkshire",
+        "crm_snapshot_date": "2026-09-14",
+        "observed_demo_events": 1
+      },
+      {
+        "order_id": 203,
+        "customer_id": 3,
+        "order_region": "London",
+        "order_date": "2026-09-14",
+        "total_order_value": "1400",
+        "current_customer_region": "London",
+        "crm_snapshot_date": "2026-09-14",
+        "observed_demo_events": 0
+      },
+      {
+        "order_id": 204,
+        "customer_id": 2,
+        "order_region": "Tyne & Wear",
+        "order_date": "2026-09-14",
+        "total_order_value": "150",
+        "current_customer_region": "Tyne & Wear",
+        "crm_snapshot_date": "2026-09-14",
+        "observed_demo_events": 1
+      }
+    ]
+  }
+}

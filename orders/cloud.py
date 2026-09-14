@@ -35,7 +35,7 @@ def upload_accepted(client, bucket_name, csv_path, run_id):
     return f"gs://{bucket_name}/{blob.name}"
 
 
-def load_orders(client, uri, table_id, schema):
+def load_orders(client, uri, table_id, schema, on_submit=None):
     # This input is a complete assessment snapshot. Replacing prevents reruns
     # doubling sales. Incremental production batches would need staging + MERGE.
     config = bigquery.LoadJobConfig(
@@ -45,17 +45,21 @@ def load_orders(client, uri, table_id, schema):
         write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
     )
     job = client.load_table_from_uri(uri, table_id, job_config=config, timeout=60)
+    if on_submit:
+        on_submit(job)
     job.result(timeout=120)
     return job
 
 
-def run_query(client, sql):
+def run_query(client, sql, on_submit=None):
     preview = client.query(sql, job_config=bigquery.QueryJobConfig(dry_run=True, use_query_cache=False), timeout=60)
     if preview.total_bytes_processed > MAXIMUM_BYTES_BILLED:
         raise ValueError("Query exceeds the assessment's 10 MiB scan limit")
     job = client.query(sql, job_config=bigquery.QueryJobConfig(
         maximum_bytes_billed=MAXIMUM_BYTES_BILLED, use_query_cache=False,
     ), timeout=60)
+    if on_submit:
+        on_submit(job)
     rows = [dict(row) for row in job.result(timeout=120)]
     return rows, {
         "job_id": job.job_id, "estimated_bytes": preview.total_bytes_processed,
@@ -100,7 +104,11 @@ def run_pipeline(input_path, output_dir, project, location, service_account=None
         uri = upload_accepted(gcs, bucket_name, output_dir / "cleaned_orders.csv", run_id)
         evidence.update(status="uploaded", uri=uri)
         save()
-        job = load_orders(bq, uri, table_id, schema)
+        def record_load(job):
+            evidence.update(status="load_submitted", load_job_id=job.job_id)
+            save()
+
+        job = load_orders(bq, uri, table_id, schema, on_submit=record_load)
         evidence.update(status="loaded", load_job_id=job.job_id, loaded_rows=job.output_rows)
         save()
         if job.output_rows != len(result.accepted):
@@ -108,7 +116,11 @@ def run_pipeline(input_path, output_dir, project, location, service_account=None
         evidence["queries"] = {}
         for name in ("customer_rolling_spending", "regional_spending"):
             sql = (ROOT / "sql" / f"{name}.sql").read_text().replace("PROJECT_ID.DATASET_ID", dataset_id)
-            rows, details = run_query(bq, sql)
+            def record_query(job):
+                evidence["queries"][name] = {"job_id": job.job_id, "status": "submitted"}
+                save()
+
+            rows, details = run_query(bq, sql, on_submit=record_query)
             (output_dir / f"{name}.json").write_text(json.dumps(rows, indent=2, default=str) + "\n", encoding="utf-8")
             evidence["queries"][name] = details
             save()

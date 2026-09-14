@@ -1,0 +1,5 @@
+project_id = "YOUR-DEV-PROJECT"
+region = "europe-west2"
+composer_image = "REPLACE-WITH-SUPPORTED-COMPOSER-3-IMAGE"
+datastream_ips = [] # Populate using the regional Datastream API before applying.
+cdc_ready = false # Enable only after source publication/slot/secret setup.

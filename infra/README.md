@@ -1,6 +1,6 @@
 # Orders infrastructure: dev / pre / prod
 
-One shared module provisions the Part 2 foundation: Cloud Storage, a BigQuery dataset and `cleaned_orders` table, a loader service account with scoped access, and the required APIs. It does not deploy Datastream, Dataflow, Pub/Sub, or Composer. Three environment configurations exist; dev was applied and verified on 14 September 2026. Pre/prod are not deployed.
+One shared module provisions the Part 2 foundation: Cloud Storage, a BigQuery dataset and `cleaned_orders` table, a loader service account with scoped access, and the required APIs. Three environment configurations exist; dev was applied and verified on 14 September 2026. Pre/prod are not deployed. The optional [full-platform demo](../demo/README.md) uses separate `platform-demo` and `platform-run` roots; its teardown must not target these base environments.
 
 ## Why three environments?
 
@@ -35,11 +35,11 @@ infra/
 From the repository root, for example:
 
 ```powershell
-terraform -chdir=infra/environments/dev init -backend-config=backend.hcl
-terraform -chdir=infra/environments/dev plan -out=changes.tfplan
+terraform '-chdir=infra/environments/dev' init '-backend-config=backend.hcl'
+terraform '-chdir=infra/environments/dev' plan '-out=changes.tfplan'
 # Inspect the plan's project, resource names, IAM changes, and replacements.
-terraform -chdir=infra/environments/dev apply changes.tfplan
-terraform -chdir=infra/environments/dev output
+terraform '-chdir=infra/environments/dev' apply changes.tfplan
+terraform '-chdir=infra/environments/dev' output
 ```
 
 Repeat with `pre` or `prod` only after supplying their separate configurations and reviewing their plans. Do not reuse the saved dev plan for another environment. Applying incurs cloud usage. Dev init, plan and apply have been run against GCP; see [live evidence](../docs/cloud-verification.md).
@@ -64,8 +64,8 @@ Uploaded objects become eligible for lifecycle deletion at the configured age. S
 
 ```powershell
 terraform fmt -check -recursive infra
-terraform -chdir=infra/environments/dev init -backend=false -input=false
-terraform -chdir=infra/environments/dev validate
+terraform '-chdir=infra/environments/dev' init -backend=false -input=false
+terraform '-chdir=infra/environments/dev' validate
 # Repeat init/validate for pre and prod.
 terraform -chdir=infra/modules/orders init -backend=false -input=false
 terraform -chdir=infra/modules/orders test

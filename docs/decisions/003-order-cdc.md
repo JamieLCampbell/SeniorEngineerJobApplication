@@ -19,6 +19,6 @@ Pub/Sub and Dataflow serve the separate [clickstream route](004-clickstream-inge
 
 ## Before deployment
 
-Confirm the source engine/version, an appropriate stable primary key (OrderID only if it is genuinely unique), supported types, replication/log retention settings, permissions, and network access. Validate backfill, update/delete behaviour, and recovery on that source. No source database was supplied, so this is an architecture decision, not a deployed CDC implementation.
+Confirm the source engine/version, an appropriate stable primary key (OrderID only if it is genuinely unique), supported types, replication/log retention settings, permissions, and network access. No employer source database was supplied. A [synthetic PostgreSQL demonstration](../platform-verification.md) passed backfill and insert/update/delete checks; source compatibility and recovery still need validation on the real system.
 
 Sources: [Datastream for BigQuery](https://cloud.google.com/datastream-for-bigquery), [destination configuration and merge mode](https://docs.cloud.google.com/datastream/docs/configure-bigquery-destination), [destination limitations](https://docs.cloud.google.com/datastream/docs/destination-bigquery).

@@ -1,6 +1,6 @@
 # Senior Cloud Data Engineer assessment
 
-Working submission for the supplied GCP assessment. The final Part 1 architecture separates the brief's requirements from our choices and assumptions; Part 2 includes Python cleaning and a verified Cloud Storage-to-BigQuery dev batch.
+Submission for the supplied GCP assessment. Part 1 separates requirements from choices and assumptions; Part 2 includes Python cleaning and a verified Cloud Storage-to-BigQuery batch. An optional full-platform demonstration also exercised the proposed routes with synthetic data.
 
 ## Review the submission
 
@@ -8,7 +8,7 @@ Start with the [final architecture and diagram](docs/architecture.md), then the 
 
 Accepted: [historical spending uses the order's recorded region](docs/decisions/002-order-region-attribution.md). The [attribution SQL](sql/order_region_attribution.sql) includes the CRM alternatives beside the implementation. It is a building block with table placeholders, not the completed spending aggregation.
 
-Accepted: [CDC for transactional orders](docs/decisions/003-order-cdc.md). The working GCP route is Datastream directly to BigQuery, subject to source compatibility. It has not been deployed.
+Accepted: [CDC for transactional orders](docs/decisions/003-order-cdc.md). Datastream directly to BigQuery passed initial backfill and insert/update/delete checks using a synthetic PostgreSQL source. Compatibility with the employer's actual source still needs confirmation.
 
 Accepted: [clickstream through a collection endpoint, Pub/Sub, and Dataflow](docs/decisions/004-clickstream-ingestion.md). The notes explain each component and when direct delivery to BigQuery would be sufficient.
 
@@ -36,4 +36,4 @@ The cleaner and local SQL tests use Python's standard library. Install requireme
 - Part 2: verified Python cleaning, Cloud Storage output, BigQuery loading and analytical SQL.
 - [Terraform dev/pre/prod](infra/README.md): shared Part 2 infrastructure module with separate environment roots and state. Dev deployed and verified; pre/prod validated locally only.
 
-Dev storage, BigQuery and scoped loader IAM are deployed in London. Two live batch runs passed with six orders after replacement; Terraform reports no drift. Streaming behaviour remains unvalidated. Completed changes are pushed to the private [GitHub repository](https://github.com/JamieLCampbell/SeniorEngineerJobApplication) on `main`.
+Dev storage, BigQuery and scoped loader IAM are deployed in London. The [full-platform verification](docs/platform-verification.md) records Cloud Run, Pub/Sub, Dataflow, raw archives, Datastream CDC, Composer and the joined analytical view. The [demo code and reproduction guide](demo/README.md) use isolated Terraform state so the temporary platform can be removed while retaining the Part 2 foundation. These small functional tests do not establish production throughput or recovery guarantees.
