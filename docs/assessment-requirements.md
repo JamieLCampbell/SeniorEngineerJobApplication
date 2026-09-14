@@ -30,7 +30,7 @@ Source: the five assessment photographs supplied on 14 September 2026. This is a
 
 ## Submission
 
-Provide architecture diagrams, Python and SQL, and a brief explanation of the approach. The brief accepts a GitHub repository or shared drive. Work is pushed to a private GitHub repository; submission to the reviewers has not occurred. The learning companion is personal study material; it does not replace the final architecture explanation.
+Provide architecture diagrams, Python and SQL, and a brief explanation of the approach. The brief accepts a GitHub repository or shared drive. Work is pushed to a private GitHub repository; submission to the reviewers has not occurred.
 
 ## Information the brief does not specify
 
