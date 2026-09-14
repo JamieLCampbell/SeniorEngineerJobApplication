@@ -1,6 +1,6 @@
 # 006: Use Composer to coordinate platform batch jobs
 
-Status: accepted for the architecture on 14 September 2026. No environment will be provisioned for the small assessment implementation.
+Status: accepted for the architecture on 14 September 2026. The optional [cloud demonstration](../platform-verification.md) provisioned Composer and verified a manual CRM workflow followed by the Cloud Run orders job.
 
 Use Cloud Composer (managed Airflow) for the platform's CRM batch dependencies and deliberate reruns of retained exports. Keep the brief's Composer name; current Google documentation also calls the service Managed Service for Apache Airflow.
 
@@ -12,7 +12,7 @@ Composer starts jobs, waits for their completion, and records task outcomes. Big
 
 Airflow provides a place to express dependencies, monitor runs, and retry tasks. This fits a platform with several dependent data jobs and reruns, and gives Composer a concrete role in the assessment. We accept the environment cost and DAG maintenance. The brief mentioning Composer is context, not proof that this workload requires it.
 
-For only this short CRM sequence, Cloud Workflows with Cloud Scheduler would be a simpler alternative that also supports sequencing and retries. Reconsider Composer if broader batch dependencies do not materialise. For Part 2, a manually run Python pipeline is sufficient; a working Airflow environment is outside the implementation scope.
+For only this short CRM sequence, Cloud Workflows with Cloud Scheduler would be a simpler alternative that also supports sequencing and retries. Reconsider Composer if broader batch dependencies do not materialise. The Part 2 CSV task needs only the Python pipeline; the optional Composer demonstration verifies the broader design without making it a requirement for that task.
 
 ## Failure and rerun rules
 

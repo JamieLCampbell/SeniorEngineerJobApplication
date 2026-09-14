@@ -19,7 +19,7 @@ Each CLI run writes a new local output directory. `cleaned_orders.csv` contains 
 
 For the current sample, quarantine contains 102 and 110 (missing amount), and 103 and 108 (invalid date); 103 also has a missing-quantity rejection reason. Orders 104 and 109 remain accepted with missing-product warnings. Quantity is mandatory because the unit-price assumption requires it to calculate spending.
 
-This is logical separation on local disk, not an enforced security boundary. The proposed cloud extension is a restricted quarantine location with explicit retention and an operations-only identity. Do not upload the entire output directory to the analyst-facing destination. Cloud quarantine, its IAM, and automated incident integration are not implemented by the current Terraform.
+Local CLI output provides logical separation on disk. In the [cloud demonstration](platform-verification.md), the Cloud Run wrapper persists the complete run directory in a separate restricted demo bucket; only accepted data enters the reporting table. The bucket has explicit IAM and disposable retention. Dataflow also retains invalid events with payload and reason in a separate table. Production operations-only access and retention need a separate agreed policy; automated incident integration remains unimplemented.
 
 ## How we request and verify a fix
 

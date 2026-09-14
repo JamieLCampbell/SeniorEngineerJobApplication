@@ -1,6 +1,6 @@
 # Running the dev batch in Google Cloud
 
-The executable scope is a manual CSV batch using Cloud Storage and BigQuery. The CDC, clickstream and CRM platform remains a design. Pre/prod roots are available but are not deployed.
+This guide covers the manual CSV batch using Cloud Storage and BigQuery. The optional [full-platform demonstration](platform-verification.md) also runs the batch in a Cloud Run Job and exercises CDC, clickstream and CRM. Its [separate run guide](../demo/README.md) covers deployment and teardown. Pre/prod roots remain undeployed.
 
 ## Setup
 

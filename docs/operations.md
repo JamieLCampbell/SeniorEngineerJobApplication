@@ -1,6 +1,6 @@
 # Operating the proposed platform
 
-These are design controls, not deployed settings. Exact thresholds and retention periods need workload and business requirements.
+These are production design controls. The [synthetic demonstration](platform-verification.md) verifies selected access, quarantine and publication behaviour; it does not implement every control below. Exact thresholds and retention periods need workload and business requirements.
 
 ## Access
 

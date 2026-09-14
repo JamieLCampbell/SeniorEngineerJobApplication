@@ -4,7 +4,7 @@ Part 1 submission â€” 14 September 2026.
 
 Use continuous ingestion for transactional changes and website events, with batch CRM exports where consumers can tolerate their age. Keep source replication, validation and reporting separate so fresh data is not mistaken for correct data. BigQuery provides the analytical query layer; retained files support investigation and replay where available.
 
-This is the proposed platform design. The separately implemented [Part 2 dev batch](cloud-verification.md) proves Python cleaning, accepted-file upload, BigQuery loading and spending queries. It does not validate the platform's CDC, streaming performance or recovery.
+This is the platform design. The [Part 2 dev batch](cloud-verification.md) proves Python cleaning, accepted-file upload, BigQuery loading and spending queries. A separate [synthetic cloud demonstration](platform-verification.md) verifies CDC changes, streaming validation, CRM publication and orchestration. Production performance and recovery remain untested.
 
 ## Requirements confirmed by the assessment
 
@@ -123,9 +123,9 @@ These are deployment gates, not gaps concealed by invented numbers. The selected
 
 | Scope | Evidence |
 | --- | --- |
-| Part 1 platform | Final diagram and rationale above, supported by six decision records and operating controls; not deployed |
+| Part 1 platform | Final diagram and six decision records; optional synthetic cloud demonstration verified all three source routes and a joined view |
 | Part 2 batch | Python cleaning â†’ accepted CSV in Cloud Storage â†’ BigQuery replacement load â†’ spending SQL; two verified dev runs |
 | Infrastructure as code | Shared Terraform module and dev/pre/prod roots; dev applied with no post-load drift, pre/prod locally validated only |
-| Operations | Dev loader impersonation, private storage, per-query scan limits and run evidence implemented; platform monitoring, replay, cloud quarantine and incident integration remain design work |
+| Operations | Private storage, scoped runtime identities, scan limits, cloud quarantine and run evidence demonstrated; production alerts, replay and incident integration remain design work |
 
 See the [requirements checklist](assessment-requirements.md), [live verification](cloud-verification.md) and [run/cleanup guide](cloud-run.md). Part 1 is a design deliverable; deploying the full streaming platform is not required to demonstrate the separately specified CSV task.

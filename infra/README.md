@@ -1,6 +1,6 @@
 # Orders infrastructure: dev / pre / prod
 
-One shared module provisions the Part 2 foundation: Cloud Storage, a BigQuery dataset and `cleaned_orders` table, a loader service account with scoped access, and the required APIs. It does not deploy Datastream, Dataflow, Pub/Sub, or Composer. Three environment configurations exist; dev was applied and verified on 14 September 2026. Pre/prod are not deployed.
+One shared module provisions the Part 2 foundation: Cloud Storage, a BigQuery dataset and `cleaned_orders` table, a loader service account with scoped access, and the required APIs. Three environment configurations exist; dev was applied and verified on 14 September 2026. Pre/prod are not deployed. The optional [full-platform demo](../demo/README.md) uses separate `platform-demo` and `platform-run` roots; its teardown must not target these base environments.
 
 ## Why three environments?
 

@@ -1,6 +1,6 @@
 # 004: Process clickstream through Pub/Sub and Dataflow
 
-Status: accepted for the assessment architecture on 14 September 2026. Not deployed.
+Status: accepted for the assessment architecture on 14 September 2026. A [synthetic cloud demonstration](../platform-verification.md) verified ingestion, validation, quarantine, archiving and exact-retry deduplication.
 
 **Route: website → collection endpoint → Pub/Sub → Dataflow → BigQuery.**
 
