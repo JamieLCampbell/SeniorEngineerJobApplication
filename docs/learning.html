@@ -37,12 +37,24 @@
     <p class="muted">YOUR PROJECT LEARNING COMPANION</p>
     <h1>Understand the decisions<br>as we make them</h1>
     <p>Work through one decision at a time. Explore alternatives, explain the consequences in your own words, then discuss what belongs in the project.</p>
-    <p class="status">Decided: use the order's recorded region for historical spending. Broader CRM freshness remains open.</p>
+    <p class="status">Decided: order-region attribution and CDC for transactional orders. Broader CRM freshness remains open.</p>
     <nav class="links" aria-label="Notebook sections">
-      <a href="#problem">The problem</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
+      <a href="#cdc">Latest: CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
     </nav>
   </header>
   <main>
+    <section id="cdc">
+      <h2>Our next decision: CDC for orders</h2>
+      <p><strong>CDC means Change Data Capture.</strong> After copying the existing data, we capture ongoing database changes so the analytical copy can follow the source.</p>
+      <p>Our working route is <strong>database → Datastream → BigQuery replica → analytical SQL</strong>. Datastream supports a direct BigQuery destination; this route does not need Pub/Sub and Dataflow in the middle.</p>
+      <details><summary>Why choose this over application events?</summary><p>The brief gives us transactional databases, but does not say we can modify the shop application. CDC captures changes at the database level. Application events would give clearer business meanings, such as “payment accepted”, but require application integration and reliable publishing. A changed row does not always explain the business action behind it.</p></details>
+      <details><summary>What does the initial copy do?</summary><p>It brings in existing orders. Without that backfill or another initial load, capturing only future changes would not provide the complete starting dataset. Datastream supports backfill alongside ongoing replication.</p></details>
+      <details><summary>What happens when an order changes or is deleted?</summary><p>Our working choice is merge mode with a supported primary key: an update changes the replicated row, and a delete removes it from current state. We therefore cannot call this replica a permanent audit history. If we need every earlier version, we must design history retention separately.</p></details>
+      <details><summary>What could stop this design working?</summary><p>We still need the actual database engine and version, a suitable primary key, replication permissions/settings, and network access. CDC is the selected approach; Datastream compatibility is an assumption to verify. Replication also does not fix missing values or decide what a metric means.</p></details>
+      <p><strong>Check your understanding:</strong> if a source order is deleted, should we expect to find its original version in a current-state replica?</p>
+      <details><summary>Reveal the answer</summary><p>No. The replica follows source state. A permanent historical record needs an explicit history or archival design. Keeping the original order region protects against customer-profile changes, but does not itself preserve a deleted order.</p></details>
+      <p><a href="decisions/003-order-cdc.md">Read our short CDC decision</a> · <a href="https://cloud.google.com/datastream-for-bigquery">Google's direct replication overview</a></p>
+    </section>
     <section id="problem">
       <h2>1. What are we deciding?</h2>
       <p><strong>Must every source update continuously, or can some arrive in batches?</strong> The assessment names orders, clicks, and CRM data. It asks for real-time analytics and consideration of batch processing, but gives no numerical freshness target.</p>
@@ -97,7 +109,7 @@
         <li><a href="architecture.md">Logical architecture draft</a>: the responsibilities and routes before selecting services.</li>
         <li><a href="decisions/001-source-freshness.md">Decision 001</a>: the proposed choice, alternatives, and conditions that would change it.</li>
       </ul>
-      <p>Next we will examine how order changes leave the source reliably. Only then can we justify the ingestion components.</p>
+      <p>CDC now handles the proposed order route. Next we will choose how to ingest clickstream events, which originate in the website rather than the transactional database.</p>
     </section>
   </main>
   <footer><p class="muted">This notebook grows with the project. Examples are hypothetical; no timing or cost claims here are measured cloud results.</p></footer>

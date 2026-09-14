@@ -10,6 +10,8 @@ Start with the [assessment requirements](docs/assessment-requirements.md), [logi
 
 Accepted: [historical spending uses the order's recorded region](docs/decisions/002-order-region-attribution.md). The [attribution SQL](sql/order_region_attribution.sql) includes the CRM alternatives beside the implementation. It is a building block with table placeholders, not the completed spending aggregation.
 
+Accepted: [CDC for transactional orders](docs/decisions/003-order-cdc.md). The working GCP route is Datastream directly to BigQuery, subject to source compatibility. It has not been deployed.
+
 ## Review approach
 
 Use small commits representing complete changes. Subjects describe the change; bodies explain the reason, alternatives, consequences, and relevant validation. Record actual decisions as they are made, without presenting proposals as agreed requirements.
@@ -20,4 +22,4 @@ Use small commits representing complete changes. Subjects describe the change; b
 - Part 2: build and verify Python cleaning, Cloud Storage output, BigQuery loading, and analytical SQL.
 - Optional infrastructure as code: decide after the implementation scope is agreed.
 
-No cloud resources have been provisioned by this repository. Cloud execution and streaming behaviour have not been validated. A GitHub remote has not yet been configured.
+No cloud resources have been provisioned by this repository. Cloud execution and streaming behaviour have not been validated. Completed changes are pushed to the private [GitHub repository](https://github.com/JamieLCampbell/SeniorEngineerJobApplication) on `codex/architecture-learning`.
