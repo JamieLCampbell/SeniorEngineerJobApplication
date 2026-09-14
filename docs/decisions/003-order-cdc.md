@@ -15,7 +15,7 @@ Working route: **source database → Datastream → BigQuery replica → analyti
 - The working design uses merge mode with a supported primary key. Updates and deletes change the replica. It is not an immutable order history or event archive. If audit history or historical reconstruction is required, revisit append-only capture or archival explicitly.
 - Replication does not clean the data. Keep the replica separate from analytical transformations, and monitor replication lag and errors. No numerical freshness guarantee has been established.
 
-Pub/Sub and Dataflow can still serve clickstream ingestion and processing; they are not required intermediaries for this direct CDC route. Their selection remains a separate decision.
+Pub/Sub and Dataflow serve the separate [clickstream route](004-clickstream-ingestion.md); they are not required intermediaries for this direct CDC route.
 
 ## Before deployment
 

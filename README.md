@@ -12,6 +12,8 @@ Accepted: [historical spending uses the order's recorded region](docs/decisions/
 
 Accepted: [CDC for transactional orders](docs/decisions/003-order-cdc.md). The working GCP route is Datastream directly to BigQuery, subject to source compatibility. It has not been deployed.
 
+Accepted: [clickstream through a collection endpoint, Pub/Sub, and Dataflow](docs/decisions/004-clickstream-ingestion.md). The notes explain each component and when direct delivery to BigQuery would be sufficient.
+
 ## Review approach
 
 Use small commits representing complete changes. Subjects describe the change; bodies explain the reason, alternatives, consequences, and relevant validation. Record actual decisions as they are made, without presenting proposals as agreed requirements.

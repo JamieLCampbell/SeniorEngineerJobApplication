@@ -37,12 +37,24 @@
     <p class="muted">YOUR PROJECT LEARNING COMPANION</p>
     <h1>Understand the decisions<br>as we make them</h1>
     <p>Work through one decision at a time. Explore alternatives, explain the consequences in your own words, then discuss what belongs in the project.</p>
-    <p class="status">Decided: order-region attribution and CDC for transactional orders. Broader CRM freshness remains open.</p>
+    <p class="status">Decided: order-region attribution, order CDC, and the clickstream route. CRM timing and storage details remain open.</p>
     <nav class="links" aria-label="Notebook sections">
-      <a href="#cdc">Latest: CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
+      <a href="#clickstream">Latest: clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
     </nav>
   </header>
   <main>
+    <section id="clickstream">
+      <h2>Clickstream: collect, buffer, process</h2>
+      <p>We chose <strong>website → collection endpoint → Pub/Sub → Dataflow → BigQuery</strong>.</p>
+      <p>A product-view event first reaches our server endpoint. The endpoint checks the request and publishes it. Pub/Sub holds the published message for the processing subscription. Dataflow applies the event rules and writes the accepted record to BigQuery.</p>
+      <details><summary>Why have an endpoint as well as Pub/Sub?</summary><p>The browser sends an HTTP request to our collection endpoint. The server holds permission to publish to the cloud; we do not put cloud credentials in the browser. This endpoint might live in the existing website backend. We have not chosen another hosting service just for the diagram.</p></details>
+      <details><summary>What does the buffer buy us?</summary><p>If processing slows down, already published events can wait in Pub/Sub within its configured retention limits. Collection and processing do not have to run at exactly the same speed. We must still monitor backlog age: a growing queue means users are seeing older data.</p></details>
+      <details><summary>Why Dataflow, and when would we remove it?</summary><p>It gives us a place for event-specific validation, supported field conversion, and rejected-record handling. We accept another running job and its cost. If the actual event schema needs only simple conversion, a direct BigQuery subscription may be enough. Basic cleaning does not automatically justify Dataflow; our custom processing requirement must survive review.</p></details>
+      <details><summary>What happens to a bad timestamp?</summary><p>A recognised format can be converted. A value we cannot interpret goes to a separate restricted output with a reason. We do not invent the time, silently drop the event, or retry a permanently invalid value forever. A temporary storage failure is a different problem and must be surfaced and retried appropriately.</p></details>
+      <p><strong>Check your understanding:</strong> the endpoint publishes successfully, but the browser never receives its response and retries. Can two messages describe the same click?</p>
+      <details><summary>Reveal the answer</summary><p>Yes. Preserve the same event ID across retries so duplicate business events can be recognised. Pub/Sub buffering alone does not solve that problem. We still need to define duplicate handling and how long identifiers must be remembered before deployment.</p></details>
+      <p><a href="decisions/004-clickstream-ingestion.md">Read the clickstream decision</a> · <a href="https://docs.cloud.google.com/pubsub/docs/bigquery">Compare direct BigQuery delivery</a></p>
+    </section>
     <section id="cdc">
       <h2>Our next decision: CDC for orders</h2>
       <p><strong>CDC means Change Data Capture.</strong> After copying the existing data, we capture ongoing database changes so the analytical copy can follow the source.</p>
@@ -109,7 +121,7 @@
         <li><a href="architecture.md">Logical architecture draft</a>: the responsibilities and routes before selecting services.</li>
         <li><a href="decisions/001-source-freshness.md">Decision 001</a>: the proposed choice, alternatives, and conditions that would change it.</li>
       </ul>
-      <p>CDC now handles the proposed order route. Next we will choose how to ingest clickstream events, which originate in the website rather than the transactional database.</p>
+      <p>Order CDC and clickstream ingestion are now chosen. Next we will settle the batch CRM route and the role of Cloud Storage, then decide how much orchestration the design needs.</p>
     </section>
   </main>
   <footer><p class="muted">This notebook grows with the project. Examples are hypothetical; no timing or cost claims here are measured cloud results.</p></footer>
