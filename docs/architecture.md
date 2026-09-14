@@ -18,7 +18,8 @@ flowchart LR
     H --> E[Pub/Sub]
     E --> U[Processing subscription]
     U --> P[Dataflow validation and transformation]
-    E -. Archive route to design .-> R[Clickstream archive: pending]
+    E --> Z[Cloud Storage archive subscription]
+    Z --> R[Cloud Storage event archive]
     M[CRM] --> B[Batch export]
     B --> G[Cloud Storage original CRM exports]
     G --> J[BigQuery staging]
@@ -33,12 +34,12 @@ flowchart LR
     X --> I
     S --> I
     Q --> A[Analysts]
-    Q --> L[ML consumers: serving needs unresolved]
+    Q --> L[Offline ML training]
 ```
 
 The arrows describe responsibilities, not atomic delivery guarantees. Raw archiving, analytical writes, reconciliation, and replay safety need explicit designs.
 
-Solid arrows represent data movement. Composer's labelled dotted arrows represent control of batch tasks; the clickstream archive's dotted arrow is an unimplemented route still to be designed.
+Solid arrows represent data movement. Composer's labelled dotted arrows represent control of batch tasks. All routes describe the proposed platform; none have been deployed.
 
 ### Transactional ingestion
 
@@ -66,8 +67,8 @@ Cloud Composer coordinates export readiness, staging loads, validation, and publ
 2. [Order CDC](decisions/003-order-cdc.md): accepted; Datastream direct to BigQuery is the working route pending source compatibility checks.
 3. [Clickstream ingestion](decisions/004-clickstream-ingestion.md): accepted; collection endpoint → Pub/Sub → Dataflow → BigQuery.
 4. Transformation placement: Dataflow for clickstream, SQL after order replication and CRM staging; detailed rules pending.
-5. [CRM batch ingestion](decisions/005-crm-batch.md): accepted; Cloud Storage → BigQuery staging → SQL. Retention, table design, and clickstream archival remain open.
+5. [CRM batch ingestion](decisions/005-crm-batch.md): accepted; Cloud Storage → BigQuery staging → SQL. Clickstream archives use a separate Cloud Storage subscription; retention, table design, and replay implementation remain open.
 6. [Batch orchestration](decisions/006-batch-orchestration.md): Composer selected for the platform design; schedule and retry values open. No Composer deployment for Part 2.
-7. Identity, privacy, monitoring, recovery, and cost controls: pending.
+7. [Operating controls](operations.md): scoped identities, curated read access, freshness/error monitoring, source-specific recovery, and cost controls. Exact operational values remain open.
 
 Use the [requirements checklist](assessment-requirements.md) to ensure the finished diagram and explanation cover the assessment. Exact latency, region, scale, retention, and recovery assumptions have not been selected.
