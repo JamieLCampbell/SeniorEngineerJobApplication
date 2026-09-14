@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Architecture decision notebook</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #111719; color: #e5ebed; }
+    * { box-sizing: border-box; }
+    body { margin: 0; line-height: 1.7; }
+    header, main, footer { max-width: 900px; margin: auto; padding: 32px 28px; }
+    header { border-bottom: 1px solid #3a5158; padding-top: 56px; }
+    h1 { font-size: clamp(32px, 6vw, 48px); line-height: 1.15; font-weight: 600; }
+    h2 { font-size: 28px; line-height: 1.25; margin-top: 0; }
+    h3 { font-size: 21px; color: #a6dedb; }
+    p, li, label { font-size: 18px; }
+    a, summary { color: #a6dedb; }
+    section { margin-bottom: 54px; scroll-margin-top: 24px; }
+    .muted { color: #b0c1c6; }
+    .status { color: #f4d497; }
+    .example { border-left: 3px solid #82c8c3; padding-left: 24px; }
+    details { border-top: 1px solid #3a5158; padding: 18px 0; }
+    summary { font-size: 20px; font-weight: 600; cursor: pointer; }
+    select, textarea, button { font: inherit; color: inherit; background: #1c272c; border: 1px solid #5f797f; padding: 12px; border-radius: 4px; }
+    select, textarea { width: 100%; }
+    textarea { min-height: 180px; margin-top: 10px; resize: vertical; }
+    button { cursor: pointer; margin: 12px 12px 0 0; }
+    :focus-visible { outline: 3px solid #a6dedb; outline-offset: 4px; }
+    #consequence { min-height: 125px; padding: 20px 0; }
+    .links { display: flex; flex-wrap: wrap; gap: 12px 24px; }
+    footer { border-top: 1px solid #3a5158; }
+    @media print { :root { color-scheme: light; background: white; color: black; } button, select, textarea { display: none; } section { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="muted">YOUR PROJECT LEARNING COMPANION</p>
+    <h1>Understand the decisions<br>as we make them</h1>
+    <p>Work through one decision at a time. Explore alternatives, explain the consequences in your own words, then discuss what belongs in the project.</p>
+    <p class="status">Current decision: freshness by source · proposed, not agreed</p>
+    <nav class="links" aria-label="Notebook sections">
+      <a href="#problem">The problem</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
+    </nav>
+  </header>
+  <main>
+    <section id="problem">
+      <h2>1. What are we deciding?</h2>
+      <p><strong>Must every source update continuously, or can some arrive in batches?</strong> The assessment names orders, clicks, and CRM data. It asks for real-time analytics and consideration of batch processing, but gives no numerical freshness target.</p>
+      <p>We need to decide how data should arrive before choosing the services that move it. Otherwise we cannot explain why those services are necessary.</p>
+      <h3>What “fresh” actually means</h3>
+      <p>Freshness is how long a change takes to become available to the person or system using it. Waiting for an export, processing it, loading it, and refreshing a dashboard can all add delay.</p>
+      <div class="example">
+        <p><strong>Hypothetical example:</strong> an order is placed at 10:02. An hourly batch next starts at 11:00. The order waits 58 minutes before processing even starts.</p>
+        <p>A streaming route can remove that scheduled wait. It still has source, processing, and delivery delays.</p>
+      </div>
+      <details><summary>Why not choose a one-minute target immediately?</summary><p>It would be an assumption. First ask what decision needs that freshness, where we measure it, and whether the source can supply it. A target for warehouse availability is different from a target for a refreshed dashboard.</p></details>
+    </section>
+    <section id="options">
+      <h2>2. Explore the alternatives</h2>
+      <label for="choice">Change the approach to see what you gain and accept</label>
+      <select id="choice">
+        <option value="batch">Process every source in scheduled batches</option>
+        <option value="stream">Stream every source</option>
+        <option value="mixed" selected>Stream events; batch CRM where acceptable</option>
+      </select>
+      <div id="consequence" aria-live="polite"></div>
+      <details><summary>Why is the mixed approach our recommendation?</summary><p>It accommodates both modes named in the brief. It lets the freshness requirement differ by source. But it is defensible only if using an older CRM snapshot is acceptable to the consumer. We must state that limitation rather than calling the entire result “real time”.</p></details>
+      <details><summary>Does streaming mean Dataflow is already chosen?</summary><p>No. Streaming is a processing approach. Dataflow is one service that supports it. We will separately ask whether we need custom transformations, buffering, and orchestration before assigning those responsibilities to services.</p><p><a href="https://docs.cloud.google.com/dataflow/docs/overview">Google’s Dataflow overview</a> confirms support for batch and streaming. It does not establish which option fits our business requirements.</p></details>
+      <details><summary>When would we change the recommendation?</summary><p>If CRM changes must affect immediate decisions, we would investigate incremental or streaming CRM ingestion. If all consumers tolerate longer delays, we would examine whether scheduled batches meet the assessment’s real-time expectation. If a source cannot expose changes reliably, we must resolve extraction first.</p></details>
+    </section>
+    <section id="challenge">
+      <h2>3. Can you spot the consequence?</h2>
+      <p>A customer's CRM region changes at 09:30. Our latest CRM snapshot is from 09:00. Their new order arrives at 10:02 and is processed immediately.</p>
+      <p><strong>If we join that order to the CRM snapshot, is its region current?</strong></p>
+      <details><summary>Reveal the reasoning after you have tried</summary><p>No. Fast order processing does not make the CRM snapshot current. We have combined a fresh event with an older attribute.</p><p>We could refresh CRM more often, capture changes, or use the region recorded on the order if the metric is about where the order occurred. The last option changes the meaning of the analysis, not just the technology.</p><p>The sample calls the field <strong>OrderRegion</strong>. We should not silently substitute a customer's current region. This is a concrete example of a decision we must justify before writing a transformation.</p></details>
+      <h3>Try explaining the decision out loud</h3>
+      <p>“I propose ___ because the consumer needs ___. Compared with ___, this gives us ___. We accept ___, and would reconsider if ___.”</p>
+      <p class="muted">Use this to check your reasoning, not as a script to memorise.</p>
+    </section>
+    <section id="notes">
+      <h2>4. Write your reasoning</h2>
+      <label for="reasoning">What would you choose, why, and what remains uncertain?</label>
+      <textarea id="reasoning" placeholder="I would choose… because… The main disadvantage is… I would change this if…"></textarea>
+      <p class="muted" id="save-status" role="status">Notes stay in this browser where local storage is available. They do not update Git or mark a decision agreed.</p>
+      <button id="download" type="button">Download my notes</button>
+      <p>Share your reasoning in our conversation. We can challenge it together, then update the decision record with the conclusion.</p>
+    </section>
+    <section>
+      <h2>5. What we have put in the project</h2>
+      <ul>
+        <li><a href="assessment-requirements.md">Requirements checklist</a>: what the brief asks us to demonstrate.</li>
+        <li><a href="architecture.md">Logical architecture draft</a>: the responsibilities and routes before selecting services.</li>
+        <li><a href="decisions/001-source-freshness.md">Decision 001</a>: the proposed choice, alternatives, and conditions that would change it.</li>
+      </ul>
+      <p>Next we will examine how order changes leave the source reliably. Only then can we justify the ingestion components.</p>
+    </section>
+  </main>
+  <footer><p class="muted">This notebook grows with the project. Examples are hypothetical; no timing or cost claims here are measured cloud results.</p></footer>
+  <script>
+    const choice = document.getElementById('choice');
+    const explanations = {
+      batch: 'You gain finite runs and clear replay boundaries. You accept scheduled waiting before processing. This may fail the real-time requirement; the actual end-to-end delay must be compared with the agreed target.',
+      stream: 'You aim for fresh data across sources. You accept continuous operation and must establish a reliable change feed for every source. This effort is justified only if the consumers need that freshness.',
+      mixed: 'You keep orders and clicks fresh while allowing scheduled CRM imports. You accept different data ages: a current order can be joined to an older customer attribute. CRM cadence remains undecided.'
+    };
+    function explain() { document.getElementById('consequence').textContent = explanations[choice.value]; }
+    choice.addEventListener('change', explain);
+    explain();
+    const notes = document.getElementById('reasoning');
+    const status = document.getElementById('save-status');
+    const key = 'senior-engineer-learning:freshness:v1';
+    try { notes.value = localStorage.getItem(key) || ''; }
+    catch { status.textContent = 'Browser storage is unavailable. Download your notes before leaving.'; }
+    notes.addEventListener('input', () => {
+      try { localStorage.setItem(key, notes.value); status.textContent = 'Saved in this browser only. Download a copy to keep it independently.'; }
+      catch { status.textContent = 'Could not save in this browser. Download your notes before leaving.'; }
+    });
+    document.getElementById('download').addEventListener('click', () => {
+      const blob = new Blob(['# My reasoning: freshness by source\n\n' + notes.value], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'my-freshness-reasoning.md';
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+  </script>
+</body>
+</html>

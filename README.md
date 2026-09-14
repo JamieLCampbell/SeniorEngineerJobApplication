@@ -2,11 +2,11 @@
 
 Working submission for the supplied GCP assessment. We are starting with architecture discussion; Python is selected for Part 2.
 
-## Learning deck
+## Work through the project
 
-Open [GCP data engineering from first principles](docs/first-principles.html) in a browser. It is a self-contained HTML presentation and works offline. Use the arrow buttons or keys, the topic selector, and expandable speaking notes (`N`). Print uses a landscape layout and includes every slide without notes.
+Open the [architecture decision notebook](docs/learning.html) in a browser. It works offline and focuses on one real project decision at a time, with alternatives, worked examples, an understanding check, and space to explain your reasoning. Browser notes can be downloaded; they do not change repository decisions.
 
-The deck adapts the selected Simple Dark Mode template's black background, white typography, and blue accents to responsive HTML. It is a teaching companion, not a PowerPoint file or the final architecture submission. Proposed latency, ingestion, and quality policies are explicitly open for discussion. Google documentation is linked in relevant notes.
+Start with the [assessment requirements](docs/assessment-requirements.md), [logical architecture draft](docs/architecture.md), and [first proposed decision](docs/decisions/001-source-freshness.md). The earlier slide deck remains in `docs/first-principles.html` as a historical draft; the notebook replaces it as the learning entry point.
 
 ## Review approach
 
