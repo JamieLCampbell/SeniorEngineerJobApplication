@@ -37,12 +37,24 @@
     <p class="muted">YOUR PROJECT LEARNING COMPANION</p>
     <h1>Understand the decisions<br>as we make them</h1>
     <p>Work through one decision at a time. Explore alternatives, explain the consequences in your own words, then discuss what belongs in the project.</p>
-    <p class="status">Decided: order-region attribution, order CDC, and the clickstream route. CRM timing and storage details remain open.</p>
+    <p class="status">Decided: order attribution, order CDC, clickstream, and the CRM batch route. Scheduling, cadence, and retention remain open.</p>
     <nav class="links" aria-label="Notebook sections">
-      <a href="#clickstream">Latest: clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
+      <a href="#crm">Latest: CRM batches</a><a href="#clickstream">Clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
     </nav>
   </header>
   <main>
+    <section id="crm">
+      <h2>CRM batches: keep the file, check the load</h2>
+      <p>We chose <strong>CRM export → Cloud Storage → BigQuery staging → SQL validation → reporting tables</strong>.</p>
+      <p>Cloud Storage holds the original file. Staging is a separate table where an import can be checked before reports use it. SQL handles the tabular rules without another processing service.</p>
+      <details><summary>Why keep the original export?</summary><p>If we discover an incorrect cleaning rule, we can reload the file and try again. A direct load could be simpler, but we would depend on the CRM or connector to reproduce that earlier input. Keeping files also adds storage and privacy responsibilities, so retention must be finite and access restricted.</p></details>
+      <details><summary>Why not load straight into the report?</summary><p>A partial or invalid import could replace good data. Instead, validate the staged snapshot first, then publish it. If validation fails, keep the previous report and its original freshness timestamp so users can see that it has not advanced.</p></details>
+      <details><summary>What does a snapshot mean?</summary><p>A complete export describes the customer dataset at a point in time. That is our working assumption. An incremental file contains only changes, so replacing the whole report with it would lose unchanged customers. We must confirm the CRM export behaviour before implementing the load.</p></details>
+      <details><summary>How do reruns stay safe?</summary><p>Identify the export and rebuild its staged result instead of appending the same rows twice. Only a newer validated snapshot should advance the current report. Replaying an older file can help investigation, but must not silently roll the current report backwards.</p></details>
+      <p><strong>Check your understanding:</strong> yesterday's customer export is loaded successfully at noon today. Is the customer data fresh as of noon?</p>
+      <details><summary>Reveal the answer</summary><p>No. Load time describes our processing. The source snapshot time describes the age of the customer data. Keep both, and show consumers the source time. We have not yet chosen the export frequency or retention period.</p></details>
+      <p><a href="decisions/005-crm-batch.md">Read the CRM batch decision</a> · <a href="https://docs.cloud.google.com/bigquery/docs/batch-loading-data">Google's batch loading guidance</a></p>
+    </section>
     <section id="clickstream">
       <h2>Clickstream: collect, buffer, process</h2>
       <p>We chose <strong>website → collection endpoint → Pub/Sub → Dataflow → BigQuery</strong>.</p>
@@ -121,7 +133,7 @@
         <li><a href="architecture.md">Logical architecture draft</a>: the responsibilities and routes before selecting services.</li>
         <li><a href="decisions/001-source-freshness.md">Decision 001</a>: the proposed choice, alternatives, and conditions that would change it.</li>
       </ul>
-      <p>Order CDC and clickstream ingestion are now chosen. Next we will settle the batch CRM route and the role of Cloud Storage, then decide how much orchestration the design needs.</p>
+      <p>All three source routes are now chosen. Next we will decide how to coordinate batch tasks, including whether Composer earns its place in the design.</p>
     </section>
   </main>
   <footer><p class="muted">This notebook grows with the project. Examples are hypothetical; no timing or cost claims here are measured cloud results.</p></footer>

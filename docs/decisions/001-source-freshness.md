@@ -1,6 +1,6 @@
 # 001: Choose freshness by source
 
-Status: proposed for discussion. No numeric freshness target has been agreed.
+Status: mixed approach accepted through Decisions 003–005. No numeric freshness target has been agreed.
 
 ## Problem
 
@@ -16,11 +16,11 @@ Freshness means the elapsed time between a source change and the moment the corr
 | Stream every source | Potential for fresh data throughout | Requires suitable source interfaces and continuous operational handling | Every source has a demonstrated freshness need |
 | Stream event sources; batch reference data where acceptable | Supports fresh events without requiring continuous extraction everywhere | Joins can combine fresh events with older customer attributes | Consumers accept a stated reference-data age |
 
-## Recommendation
+## Decision
 
 Use the third option as the working design: a streaming route for clicks and order changes, and a batch route for CRM **if** the agreed use cases tolerate its age. Preserve a replay route. Defer the CRM cadence and numerical freshness targets until their purpose is clear.
 
-This is a source-level choice, not yet a selection of Pub/Sub, Dataflow, Composer, or a database connector. The brief calls for discussing those services; we will justify their roles separately.
+Service routes are now recorded separately: [order CDC](003-order-cdc.md), [clickstream](004-clickstream-ingestion.md), and [CRM batches](005-crm-batch.md). Scheduling remains open. Batch CRM assumes its consumers can tolerate the export delay; it is not a guarantee of fresh customer attributes.
 
 ## Why this is defensible
 

@@ -18,10 +18,11 @@ flowchart LR
     H --> E[Pub/Sub]
     E --> U[Processing subscription]
     U --> P[Dataflow validation and transformation]
-    E -. Archive route to design .-> R[Raw archive]
-    M[CRM] --> B[Batch extraction: proposed]
-    B --> R
-    R --> X[Batch validation and replay]
+    E -. Archive route to design .-> R[Clickstream archive: pending]
+    M[CRM] --> B[Batch export]
+    B --> G[Cloud Storage original CRM exports]
+    G --> J[BigQuery staging]
+    J --> X[SQL validation and snapshot publication]
     P --> V[BigQuery accepted events]
     V --> Q
     X --> Q
@@ -46,13 +47,17 @@ Historical regional spending uses the region recorded on the order, without a CR
 
 Use a collection endpoint, Pub/Sub, and Dataflow to validate and transform website events before writing accepted records to BigQuery. Known invalid events go to a separate restricted output with reasons. The endpoint's hosting and the event schema remain unspecified. Dataflow provides custom processing at the cost of another running service; direct Pub/Sub-to-BigQuery delivery is the simpler alternative if processing needs are modest. See [Decision 004](decisions/004-clickstream-ingestion.md).
 
+### CRM batch ingestion
+
+Retain each original CRM export in restricted Cloud Storage, load it into isolated BigQuery staging, and validate with SQL before publishing reporting data. The working assumption is a complete snapshot; a failed export leaves the last good report available with its original source timestamp. Reruns must not duplicate rows or replace current data with an older snapshot. Export cadence and retention remain open. See [Decision 005](decisions/005-crm-batch.md).
+
 ## Decisions in progress
 
-1. [Choose freshness by source](decisions/001-source-freshness.md): proposed; this determines the shape of the ingestion routes.
+1. [Choose freshness by source](decisions/001-source-freshness.md): mixed approach accepted; numerical freshness targets remain open.
 2. [Order CDC](decisions/003-order-cdc.md): accepted; Datastream direct to BigQuery is the working route pending source compatibility checks.
 3. [Clickstream ingestion](decisions/004-clickstream-ingestion.md): accepted; collection endpoint → Pub/Sub → Dataflow → BigQuery.
-4. Transformation placement: Dataflow for clickstream, SQL after order replication; detailed rules pending.
-5. Raw storage, warehouse structure, and replay: pending.
+4. Transformation placement: Dataflow for clickstream, SQL after order replication and CRM staging; detailed rules pending.
+5. [CRM batch ingestion](decisions/005-crm-batch.md): accepted; Cloud Storage → BigQuery staging → SQL. Retention, table design, and clickstream archival remain open.
 6. Scheduling and orchestration: pending.
 7. Identity, privacy, monitoring, recovery, and cost controls: pending.
 

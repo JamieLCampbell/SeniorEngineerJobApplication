@@ -7,9 +7,9 @@ Source: the five assessment photographs supplied on 14 September 2026. This is a
 | ID | Requirement | Evidence we will produce | Status |
 | --- | --- | --- | --- |
 | A1 | Design ingestion, processing, storage, and querying for e-commerce analytics on GCP | Architecture diagram showing the data routes | Initial logical outline |
-| A2 | Cover transactional databases, clickstream, and CRM | Source routes and source integration assumptions | Order CDC (003) and clickstream route (004) selected; source compatibility and CRM interface unresolved |
-| A3 | Consider real-time ingestion and batch processing | Explanation of which sources use each route and why | Decision 001 proposed |
-| A4 | Include services such as Pub/Sub, Dataflow, BigQuery, Cloud Storage, and Composer | Explain each service's role and alternatives | Pub/Sub, Dataflow, and BigQuery roles recorded; storage and orchestration details pending |
+| A2 | Cover transactional databases, clickstream, and CRM | Source routes and source integration assumptions | Routes selected (003–005); source compatibility and CRM export interface unresolved |
+| A3 | Consider real-time ingestion and batch processing | Explanation of which sources use each route and why | Mixed approach accepted; numeric targets open |
+| A4 | Include services such as Pub/Sub, Dataflow, BigQuery, Cloud Storage, and Composer | Explain each service's role and alternatives | Pub/Sub, Dataflow, BigQuery, and CRM storage roles recorded; orchestration pending |
 | A5 | Make data available to analysts and machine learning models | Curated consumption layer in the diagram | Detailed serving needs unresolved |
 | A6 | Justify scalability, cost-efficiency, and security | Decision records and operational controls | Pending |
 | A7 | Discuss latency, quality, and performance trade-offs | Consequences and revisit conditions in each decision | Started |
@@ -30,7 +30,7 @@ Source: the five assessment photographs supplied on 14 September 2026. This is a
 
 ## Submission
 
-Provide architecture diagrams, Python and SQL, and a brief explanation of the approach. The brief accepts a GitHub repository or shared drive. Publishing and sending a link have not occurred. The learning companion is personal study material; it does not replace the final architecture explanation.
+Provide architecture diagrams, Python and SQL, and a brief explanation of the approach. The brief accepts a GitHub repository or shared drive. Work is pushed to a private GitHub repository; submission to the reviewers has not occurred. The learning companion is personal study material; it does not replace the final architecture explanation.
 
 ## Information the brief does not specify
 
