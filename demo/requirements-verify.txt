@@ -1,0 +1,2 @@
+-r ../requirements-cloud.txt
+fastavro==1.12.2

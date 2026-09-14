@@ -1,0 +1,4 @@
+project_id = "YOUR-DEV-PROJECT"
+region = "europe-west2"
+image = "europe-west2-docker.pkg.dev/YOUR-DEV-PROJECT/assessment-demo/pipeline@sha256:REPLACE_WITH_BUILD_DIGEST"
+status_access_expires = "REPLACE-WITH-DEMO-END-UTC-TIMESTAMP" # e.g. YYYY-MM-DDTHH:MM:SSZ

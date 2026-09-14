@@ -1,0 +1,16 @@
+**
+!orders/
+!orders/**
+!scripts/
+!scripts/**
+!sql/
+!sql/**
+!demo/
+!demo/**
+!infra/
+!infra/modules/
+!infra/modules/orders/
+!infra/modules/orders/orders-schema.json
+!requirements-cloud.txt
+!.gcloudignore
+**/__pycache__/**
