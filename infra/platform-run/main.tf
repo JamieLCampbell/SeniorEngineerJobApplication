@@ -49,17 +49,25 @@ resource "google_project_iam_custom_role" "run_status" {
   project     = var.project_id
   role_id     = "assessmentRunStatus"
   title       = "Read assessment job completion"
-  permissions = ["run.operations.get", "run.jobs.get"]
+  permissions = ["run.operations.get"]
 }
 resource "google_project_iam_member" "composer_run_status" {
   project = var.project_id
   role    = google_project_iam_custom_role.run_status.name
   member  = "serviceAccount:demo-composer@${var.project_id}.iam.gserviceaccount.com"
-  # Read only this job and regional operation status; expire access after the demo.
+  # Operation polling is authorised at project level. Limit this to one read
+  # permission with an expiry; job metadata access is bound to the job below.
   condition {
     title      = "assessment_status_only"
-    expression = "request.time < timestamp('${var.status_access_expires}') && (resource.name == 'projects/${var.project_id}/locations/${var.region}/jobs/assessment-orders-cloud' || resource.name.startsWith('projects/${var.project_id}/locations/${var.region}/operations/'))"
+    expression = "request.time < timestamp('${var.status_access_expires}')"
   }
+}
+resource "google_cloud_run_v2_job_iam_member" "composer_status" {
+  count    = var.image == "" ? 0 : 1
+  name     = google_cloud_run_v2_job.batch[0].name
+  location = var.region
+  role     = "roles/run.viewer"
+  member   = "serviceAccount:demo-composer@${var.project_id}.iam.gserviceaccount.com"
 }
 resource "google_cloud_run_v2_service" "collector" {
   count               = var.image == "" ? 0 : 1
