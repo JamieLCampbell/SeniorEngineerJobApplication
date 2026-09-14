@@ -9,7 +9,7 @@ Source: the five assessment photographs supplied on 14 September 2026. This is a
 | A1 | Design ingestion, processing, storage, and querying for e-commerce analytics on GCP | Architecture diagram showing the data routes | Initial logical outline |
 | A2 | Cover transactional databases, clickstream, and CRM | Source routes and source integration assumptions | Routes selected (003–005); source compatibility and CRM export interface unresolved |
 | A3 | Consider real-time ingestion and batch processing | Explanation of which sources use each route and why | Mixed approach accepted; numeric targets open |
-| A4 | Include services such as Pub/Sub, Dataflow, BigQuery, Cloud Storage, and Composer | Explain each service's role and alternatives | Pub/Sub, Dataflow, BigQuery, and CRM storage roles recorded; orchestration pending |
+| A4 | Include services such as Pub/Sub, Dataflow, BigQuery, Cloud Storage, and Composer | Explain each service's role and alternatives | Roles and alternatives recorded, including Composer (006); deployment details open |
 | A5 | Make data available to analysts and machine learning models | Curated consumption layer in the diagram | Detailed serving needs unresolved |
 | A6 | Justify scalability, cost-efficiency, and security | Decision records and operational controls | Pending |
 | A7 | Discuss latency, quality, and performance trade-offs | Consequences and revisit conditions in each decision | Started |

@@ -23,6 +23,9 @@ flowchart LR
     B --> G[Cloud Storage original CRM exports]
     G --> J[BigQuery staging]
     J --> X[SQL validation and snapshot publication]
+    O[Cloud Composer: batch coordination] -. Confirm export ready .-> G
+    O -. Start and monitor load .-> J
+    O -. Validate then publish .-> X
     P --> V[BigQuery accepted events]
     V --> Q
     X --> Q
@@ -34,6 +37,8 @@ flowchart LR
 ```
 
 The arrows describe responsibilities, not atomic delivery guarantees. Raw archiving, analytical writes, reconciliation, and replay safety need explicit designs.
+
+Solid arrows represent data movement. Composer's labelled dotted arrows represent control of batch tasks; the clickstream archive's dotted arrow is an unimplemented route still to be designed.
 
 ### Transactional ingestion
 
@@ -51,6 +56,10 @@ Use a collection endpoint, Pub/Sub, and Dataflow to validate and transform websi
 
 Retain each original CRM export in restricted Cloud Storage, load it into isolated BigQuery staging, and validate with SQL before publishing reporting data. The working assumption is a complete snapshot; a failed export leaves the last good report available with its original source timestamp. Reruns must not duplicate rows or replace current data with an older snapshot. Export cadence and retention remain open. See [Decision 005](decisions/005-crm-batch.md).
 
+### Batch orchestration
+
+Cloud Composer coordinates export readiness, staging loads, validation, and publication, including safe reruns of retained CRM exports. It controls jobs rather than processing individual events. Workflows with Cloud Scheduler is the simpler alternative if the platform only needs this short sequence. Part 2 remains a manual Python run with no Composer environment. See [Decision 006](decisions/006-batch-orchestration.md).
+
 ## Decisions in progress
 
 1. [Choose freshness by source](decisions/001-source-freshness.md): mixed approach accepted; numerical freshness targets remain open.
@@ -58,7 +67,7 @@ Retain each original CRM export in restricted Cloud Storage, load it into isolat
 3. [Clickstream ingestion](decisions/004-clickstream-ingestion.md): accepted; collection endpoint → Pub/Sub → Dataflow → BigQuery.
 4. Transformation placement: Dataflow for clickstream, SQL after order replication and CRM staging; detailed rules pending.
 5. [CRM batch ingestion](decisions/005-crm-batch.md): accepted; Cloud Storage → BigQuery staging → SQL. Retention, table design, and clickstream archival remain open.
-6. Scheduling and orchestration: pending.
+6. [Batch orchestration](decisions/006-batch-orchestration.md): Composer selected for the platform design; schedule and retry values open. No Composer deployment for Part 2.
 7. Identity, privacy, monitoring, recovery, and cost controls: pending.
 
 Use the [requirements checklist](assessment-requirements.md) to ensure the finished diagram and explanation cover the assessment. Exact latency, region, scale, retention, and recovery assumptions have not been selected.

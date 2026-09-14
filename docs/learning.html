@@ -37,12 +37,24 @@
     <p class="muted">YOUR PROJECT LEARNING COMPANION</p>
     <h1>Understand the decisions<br>as we make them</h1>
     <p>Work through one decision at a time. Explore alternatives, explain the consequences in your own words, then discuss what belongs in the project.</p>
-    <p class="status">Decided: order attribution, order CDC, clickstream, and the CRM batch route. Scheduling, cadence, and retention remain open.</p>
+    <p class="status">Decided: source routes and Composer's batch coordination role. Exact schedules, retention, and operational settings remain open.</p>
     <nav class="links" aria-label="Notebook sections">
-      <a href="#crm">Latest: CRM batches</a><a href="#clickstream">Clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
+      <a href="#orchestration">Latest: orchestration</a><a href="#crm">CRM batches</a><a href="#clickstream">Clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
     </nav>
   </header>
   <main>
+    <section id="orchestration">
+      <h2>Composer: coordinate the batch steps</h2>
+      <p>We chose Composer for the proposed platform's batch jobs: <strong>confirm export ready → load staging → validate → publish if checks pass</strong>.</p>
+      <p>Composer uses Airflow to describe task dependencies. BigQuery loads and transforms the records; Composer starts that work and checks whether it finished. It does not need to handle each click or database change.</p>
+      <details><summary>What is a DAG?</summary><p>A directed acyclic graph is a set of tasks with dependencies that do not loop back on themselves. In our example, publication depends on successful validation, which depends on a successful load. The graph expresses the order in which work may happen.</p></details>
+      <details><summary>Why Composer rather than a simpler schedule?</summary><p>It gives the platform a place to manage dependent jobs, inspect failures, and rerun selected work. The trade-off is environment cost and maintenance. Workflows with Cloud Scheduler can also coordinate and retry this short sequence, and may be the better choice if that is all the platform needs. We are including Composer with a defined responsibility, not assuming the brief's service list proves it is necessary.</p></details>
+      <details><summary>Will we deploy Composer for the assessment?</summary><p>No. We will run the Part 2 Python pipeline manually. The architecture describes how a wider platform would operate; the small coding task does not need a managed Airflow environment.</p></details>
+      <details><summary>Does retrying a task make it safe?</summary><p>No. If a load appends the same export twice, an automatic retry can duplicate customer records. The load must identify its input and safely replace or reuse its staged result. Likewise, an older rerun must not overwrite a newer report.</p></details>
+      <p><strong>Check your understanding:</strong> the staging load succeeds, but the export fails the completeness check. Should the reporting table be refreshed?</p>
+      <details><summary>Reveal the answer</summary><p>No. Stop publication, show the failure, and keep the last good report with its original source timestamp. Retrying the same incomplete export will not repair it. A temporary service failure is different and can justify a bounded retry.</p></details>
+      <p><a href="decisions/006-batch-orchestration.md">Read our orchestration decision</a> · <a href="https://cloud.google.com/workflows/docs/choose-orchestration">Google's comparison</a></p>
+    </section>
     <section id="crm">
       <h2>CRM batches: keep the file, check the load</h2>
       <p>We chose <strong>CRM export → Cloud Storage → BigQuery staging → SQL validation → reporting tables</strong>.</p>
@@ -133,7 +145,7 @@
         <li><a href="architecture.md">Logical architecture draft</a>: the responsibilities and routes before selecting services.</li>
         <li><a href="decisions/001-source-freshness.md">Decision 001</a>: the proposed choice, alternatives, and conditions that would change it.</li>
       </ul>
-      <p>All three source routes are now chosen. Next we will decide how to coordinate batch tasks, including whether Composer earns its place in the design.</p>
+      <p>The source routes and batch coordinator are now chosen. Next we will set out a small set of access, monitoring, recovery, and cost controls before moving into the Python task.</p>
     </section>
   </main>
   <footer><p class="muted">This notebook grows with the project. Examples are hypothetical; no timing or cost claims here are measured cloud results.</p></footer>

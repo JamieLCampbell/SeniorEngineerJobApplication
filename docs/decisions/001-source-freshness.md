@@ -20,7 +20,7 @@ Freshness means the elapsed time between a source change and the moment the corr
 
 Use the third option as the working design: a streaming route for clicks and order changes, and a batch route for CRM **if** the agreed use cases tolerate its age. Preserve a replay route. Defer the CRM cadence and numerical freshness targets until their purpose is clear.
 
-Service routes are now recorded separately: [order CDC](003-order-cdc.md), [clickstream](004-clickstream-ingestion.md), and [CRM batches](005-crm-batch.md). Scheduling remains open. Batch CRM assumes its consumers can tolerate the export delay; it is not a guarantee of fresh customer attributes.
+Service routes are now recorded separately: [order CDC](003-order-cdc.md), [clickstream](004-clickstream-ingestion.md), and [CRM batches](005-crm-batch.md). [Composer coordinates batches](006-batch-orchestration.md); the actual schedule remains open. Batch CRM assumes its consumers can tolerate the export delay; it is not a guarantee of fresh customer attributes.
 
 ## Why this is defensible
 

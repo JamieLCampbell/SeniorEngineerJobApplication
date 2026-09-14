@@ -22,6 +22,6 @@ Keeping files adds storage and responsibility for customer data. Restrict access
 
 A direct CRM-to-BigQuery load would remove a storage step, but lose our independent copy for investigation and reruns. Prefer it only if the source or connector provides adequate replay capability. Use compatible bucket/dataset locations for the load.
 
-Composer's scheduling role is a separate decision. No CRM schema or connector was supplied, so this remains Part 1 design work. Part 2 still requires Python cleaning of the supplied orders CSV before its cleaned output goes to Cloud Storage.
+[Decision 006](006-batch-orchestration.md) assigns batch coordination to Composer in the platform design. No CRM schema or connector was supplied, so this remains Part 1 design work. Part 2 still requires Python cleaning of the supplied orders CSV before its cleaned output goes to Cloud Storage.
 
 Sources: [BigQuery batch loading](https://docs.cloud.google.com/bigquery/docs/batch-loading-data), [Cloud Storage lifecycle management](https://docs.cloud.google.com/storage/docs/lifecycle).

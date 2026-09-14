@@ -14,7 +14,9 @@ Accepted: [CDC for transactional orders](docs/decisions/003-order-cdc.md). The w
 
 Accepted: [clickstream through a collection endpoint, Pub/Sub, and Dataflow](docs/decisions/004-clickstream-ingestion.md). The notes explain each component and when direct delivery to BigQuery would be sufficient.
 
-Accepted: [CRM exports through Cloud Storage and BigQuery staging](docs/decisions/005-crm-batch.md), with SQL validation before publication. Export cadence, retention, and scheduling remain open.
+Accepted: [CRM exports through Cloud Storage and BigQuery staging](docs/decisions/005-crm-batch.md), with SQL validation before publication. Export cadence and retention remain open.
+
+Accepted: [Composer for platform batch coordination](docs/decisions/006-batch-orchestration.md). The small Part 2 implementation will run manually without a Composer environment; a simpler scheduled workflow is documented as an alternative.
 
 ## Review approach
 
