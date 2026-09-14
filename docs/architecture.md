@@ -19,38 +19,56 @@ The brief does **not** specify a numerical latency target, workload size, source
 ## Final high-level diagram
 
 ```mermaid
+---
+title: Tested cloud demo - 14 September 2026 - temporary platform torn down
+---
 flowchart TB
-    subgraph orders["Orders (CDC)"]
-        DB["Transactional database"] --> CDC["Datastream CDC + backfill"]
-        CDC --> REPLICA["BigQuery: current-state replica"]
-        REPLICA --> ORDER["SQL views: validate orders"]
+    subgraph orders["Orders: CDC"]
+        DB["Cloud SQL: PostgreSQL 15"] --> CDC["Datastream: backfill + changes"]
+        CDC --> REPLICA["BigQuery: platform_cdc.public_orders"]
     end
     subgraph clicks["Clickstream"]
-        WEB["Website events"] --> API["Collection endpoint"]
+        WEB["Authenticated test publisher"] --> API["Cloud Run service: collector"]
         API --> PS["Pub/Sub topic"]
         PS -->|Processing subscription| DF["Dataflow: validate events"]
         DF --> EVENTS["BigQuery: accepted events"]
-        PS -->|Cloud Storage subscription| ARCH["Cloud Storage: event archive"]
+        EVENTS --> UNIQUE["SQL view: deduplicate events"]
+        DF --> EVENTBAD["BigQuery: rejected events + reasons"]
+        PS -->|Storage subscription| ARCH["Cloud Storage: raw Avro archive"]
     end
-    subgraph crm["CRM (batch)"]
-        CRM["CRM exports"] --> FILES["Cloud Storage: original exports"]
-        FILES --> STAGE["BigQuery: staging"]
-        STAGE --> CHECK["SQL: validate + publish snapshot"]
-        COMPOSER["Cloud Composer"] -. Export readiness .-> FILES
-        COMPOSER -. Load job .-> STAGE
+    subgraph crm["CRM snapshots"]
+        CRM["CSV + completeness manifest"] --> FILES["Cloud Storage: CRM inputs"]
+        FILES --> STAGE["BigQuery: crm_staging"]
+        STAGE --> CHECK["SQL: validate completeness + age"]
+        CHECK -->|Pass| CURRENT["BigQuery: crm_current"]
+        CHECK -->|Fail| FAIL["Fail task; preserve last good snapshot"]
+        COMPOSER["Cloud Composer: manual DAG"] -. Check readiness .-> FILES
+        COMPOSER -. Load .-> STAGE
         COMPOSER -. Validate and publish .-> CHECK
     end
-    ORDER --> CURATED["BigQuery: curated views and tables"]
-    EVENTS --> CURATED
-    CHECK --> CURATED
-    ORDER --> BAD["Restricted rejected data + reasons"]
-    DF --> BAD
-    CHECK --> BAD
-    CURATED --> BI["Business analysts"]
-    CURATED --> ML["Offline ML training"]
+    subgraph batch["Part 2: CSV batch"]
+        INPUT["Cloud Storage: ten source orders"] --> RUN["Cloud Run Job: Python cleaner"]
+        RUN --> CLEAN["Cloud Storage: accepted CSV"]
+        CLEAN --> TABLE["BigQuery: orders_dev.cleaned_orders"]
+        TABLE --> METRICS["SQL: rolling spending + region ranking"]
+        RUN --> RUNFILES["Restricted Cloud Storage: run evidence, rejected rows + fix draft"]
+    end
+    COMPOSER -. Invoke after CRM publication .-> RUN
+    REPLICA --> CURATED["BigQuery: order_analytics view - filter, totals + joins"]
+    UNIQUE --> CURATED
+    CURRENT --> CURATED
+    subgraph consumers["Planned consumers"]
+        BI["Business analysts"]
+        ML["Offline ML training"]
+    end
+    CURATED --> BI
+    CURATED --> ML
+    METRICS --> BI
 ```
 
-**Legend:** solid arrows show data movement or query dependencies; dotted arrows show orchestration. Boxes inside each group remain separate resources and access scopes. Rejected-data outputs are logical destinations, not one shared public store. Monitoring, IAM and retention apply across the diagram and are described below. The diagram does not promise atomic writes between the archive and analytical outputs.
+**Legend:** solid arrows show data movement or query dependencies; dotted arrows show Composer orchestration. This diagram records the synthetic deployment we tested, not services currently running. The temporary platform was torn down; the original Part 2 orders bucket, table and loader identity remain. Analyst dashboards and ML jobs were not deployed. The Part 2 fixture is separate from the synthetic CDC orders.
+
+Rejected events are stored in BigQuery; the Python batch retains rejected rows and an unsent fix draft in restricted Cloud Storage. A failed CRM validation preserves the last good snapshot and records a failed task; it does not write a separate CRM quarantine store. The analytical order view filters invalid rows but does not implement CDC row quarantine. Source correction, production quality counts and recovery controls remain design work. The archive and analytical outputs are independent writes.
 
 [Open the standalone diagram](architecture.svg).
 
@@ -66,7 +84,7 @@ This route avoids adding Pub/Sub and Dataflow purely to move database rows. If t
 
 ### Clickstream: buffered events with custom validation
 
-A server-side collection endpoint validates request size/basic structure and publishes to Pub/Sub before acknowledging acceptance. Browser clients do not receive cloud credentials. Prefer an existing application backend for collection if suitable; a new hosting service is not assumed.
+A server-side collection endpoint validates request size/basic structure and publishes to Pub/Sub before acknowledging acceptance. The demo uses an authenticated Cloud Run service and a synthetic publisher; a public website integration was not built. In production, browser clients should not receive cloud credentials. An existing application backend remains an alternative to a separate collector service.
 
 A processing subscription supplies Dataflow for event validation, supported conversions and rejected-record routing. Accepted events land in BigQuery and feed curated views. Pub/Sub buffers temporary processing delays; Dataflow provides a place for custom processing. Both add operating responsibilities. If the agreed transformations are simple enough, direct Pub/Sub-to-BigQuery delivery is the cheaper, simpler alternative to reconsider. No session windows or enrichment joins are added without a use case.
 
@@ -78,7 +96,7 @@ Land identifiable original exports in Cloud Storage, recording export ID, source
 
 Reprocessing the same export replaces its staged result; it must not append customers again. An older replay must not replace a newer published snapshot. If the source supplies incremental changes, replacement is unsuitable: use keyed merges with update ordering and explicit deletion handling instead. Retaining files costs storage but provides evidence and independent replay; direct loading is an alternative if the connector already provides that capability. See [Decision 005](decisions/005-crm-batch.md).
 
-Cloud Composer coordinates export readiness, staging loads, validation and publication. It manages job dependencies and bounded retries; it does not carry events or periodically restart continuous CDC. Its environment cost is justified only if the platform has sufficient batch dependencies and reruns. For this short sequence alone, Workflows with Cloud Scheduler is a simpler alternative. This follows Google's [orchestration comparison](https://docs.cloud.google.com/workflows/docs/choose-orchestration); see [Decision 006](decisions/006-batch-orchestration.md).
+Cloud Composer coordinates export readiness, staging loads, validation and publication. The tested manual DAG then invokes the Cloud Run orders job and waits for completion. Demo task retries are disabled; production retry rules remain to be agreed. Composer manages job dependencies; it does not carry events or periodically restart continuous CDC. Its environment cost is justified only if the platform has sufficient batch dependencies and reruns. For this short sequence alone, Workflows with Cloud Scheduler is a simpler alternative. This follows Google's [orchestration comparison](https://docs.cloud.google.com/workflows/docs/choose-orchestration); see [Decision 006](decisions/006-batch-orchestration.md).
 
 ## Reporting meaning and data quality
 
@@ -88,7 +106,7 @@ Historical regional spending uses **OrderRegion recorded on the order**, without
 
 Missing facts are not invented to improve acceptance rates. Separate invalid records with source identity and reasons, reconcile input/accepted/rejected counts, and request evidence-based source corrections. Processing failures are retried or alerted; they must not be silently counted as rejected business data. Report coverage as well as job success. For CRM, a failed completeness check blocks snapshot publication; for event/order reporting, approved record-level exclusions must remain visible in quality counts.
 
-Part 2 demonstrates this policy on the supplied sample: six accepted orders, four quarantined locally, and an unsent source-fix draft. Its unit-price interpretation of OrderAmount is an explicit assumption requiring stakeholder confirmation; it is not a universal contract imposed on every platform source.
+Part 2 demonstrates this policy on the supplied sample: six accepted orders, four rejected records, and an unsent source-fix draft. The local CLI writes a run directory; the Cloud Run wrapper also persisted it in the restricted demo bucket before teardown. Its unit-price interpretation of OrderAmount is an explicit assumption requiring stakeholder confirmation; it is not a universal contract imposed on every platform source.
 
 ## Scale, cost and security
 
