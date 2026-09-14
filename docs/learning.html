@@ -37,12 +37,26 @@
     <p class="muted">YOUR PROJECT LEARNING COMPANION</p>
     <h1>Understand the decisions<br>as we make them</h1>
     <p>Work through one decision at a time. Explore alternatives, explain the consequences in your own words, then discuss what belongs in the project.</p>
-    <p class="status">Decided: source routes and Composer's batch coordination role. Exact schedules, retention, and operational settings remain open.</p>
+    <p class="status">The architecture now includes operating controls. Python starts with inspecting the original sample; cleaning rules are next.</p>
     <nav class="links" aria-label="Notebook sections">
-      <a href="#orchestration">Latest: orchestration</a><a href="#crm">CRM batches</a><a href="#clickstream">Clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
+      <a href="#operations">Latest: operating controls</a><a href="#orchestration">Orchestration</a><a href="#crm">CRM batches</a><a href="#clickstream">Clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
     </nav>
   </header>
   <main>
+    <section id="operations">
+      <h2>Can we trust it when something fails?</h2>
+      <p>Our operating choices are deliberately small: separate service identities, restricted source data, useful alerts, retained inputs for recovery, and limits on unnecessary spending.</p>
+      <details><summary>Why separate identities?</summary><p>A website collector needs to publish events. It does not need to delete customer exports or change analytical tables. Separate identities let us grant each component only the access needed for its job. Analysts read curated data rather than receiving broad access to raw customer records.</p></details>
+      <details><summary>What should trigger investigation?</summary><p>A growing event backlog, stalled order replication, missing CRM export, or sudden increase in rejected records. A green job status is not sufficient: compare input, accepted, and rejected counts, and investigate failed writes. Exact alert thresholds need actual freshness requirements and normal traffic.</p></details>
+      <details><summary>How do we recover clickstream events?</summary><p>A separate Pub/Sub Cloud Storage subscription archives payloads and metadata independently of the processing job. We must monitor the archive too: successful processing does not prove that archiving succeeded. Replays require stable event IDs and duplicate-safe writes. A retained file is useful input, not a complete recovery procedure by itself.</p></details>
+      <details><summary>Where do costs grow?</summary><p>Continuously running services, retained data, and large queries. Keep Composer and streaming Dataflow in the proposed architecture, but do not deploy them for ten CSV rows. For larger analytical tables, use suitable date filters and partitioning; check query estimates and limit bytes billed.</p></details>
+      <p><strong>Check your understanding:</strong> Dataflow is running, but every event is being rejected. Is the pipeline healthy?</p>
+      <details><summary>Reveal the answer</summary><p>No. Infrastructure uptime and useful data delivery are different things. The rejected-event rate and accepted count reveal the problem. Investigate the rule or source schema before assuming more computing capacity will help.</p></details>
+      <p><a href="operations.md">Read the operating controls</a>. These are design choices; recovery, sizing, and cloud behaviour have not been tested.</p>
+      <h3>Starting Python with the actual data</h3>
+      <p>The first script profiles the ten supplied orders without changing them. It flags two invalid dates, missing fields, and text in numeric fields. Orders 101/106 and 105/107 share other values but have different IDs: similarity alone does not prove duplication.</p>
+      <p>Next we will choose which values can be converted with evidence and which must stay unresolved. <a href="../data/README.md">Source data and profiling command</a>.</p>
+    </section>
     <section id="orchestration">
       <h2>Composer: coordinate the batch steps</h2>
       <p>We chose Composer for the proposed platform's batch jobs: <strong>confirm export ready → load staging → validate → publish if checks pass</strong>.</p>
@@ -145,7 +159,7 @@
         <li><a href="architecture.md">Logical architecture draft</a>: the responsibilities and routes before selecting services.</li>
         <li><a href="decisions/001-source-freshness.md">Decision 001</a>: the proposed choice, alternatives, and conditions that would change it.</li>
       </ul>
-      <p>The source routes and batch coordinator are now chosen. Next we will set out a small set of access, monitoring, recovery, and cost controls before moving into the Python task.</p>
+      <p>The architecture routes and operating controls are recorded. Next we will agree the Python cleaning rules using the supplied sample and the profiler's findings.</p>
     </section>
   </main>
   <footer><p class="muted">This notebook grows with the project. Examples are hypothetical; no timing or cost claims here are measured cloud results.</p></footer>

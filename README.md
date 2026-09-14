@@ -1,6 +1,6 @@
 # Senior Cloud Data Engineer assessment
 
-Working submission for the supplied GCP assessment. We are starting with architecture discussion; Python is selected for Part 2.
+Working submission for the supplied GCP assessment. The architecture draft records our choices; Part 2 has started with source-data profiling in Python.
 
 ## Work through the project
 
@@ -23,6 +23,15 @@ Accepted: [Composer for platform batch coordination](docs/decisions/006-batch-or
 Use small commits representing complete changes. Subjects describe the change; bodies explain the reason, alternatives, consequences, and relevant validation. Record actual decisions as they are made, without presenting proposals as agreed requirements.
 
 ## Current scope
+
+Inspect the supplied data without changing it:
+
+```sh
+python scripts/profile_orders.py
+python -m unittest discover -s tests -v
+```
+
+These commands use only Python's standard library. The CSV preserves the supplied errors. The profiler is not the cleaning pipeline; transformation, upload, and final SQL are still to build. [Operating controls](docs/operations.md) cover the architecture's access, monitoring, recovery, and cost decisions.
 
 - Part 1: discuss assumptions, compare architecture options, then produce a diagram and decision record.
 - Part 2: build and verify Python cleaning, Cloud Storage output, BigQuery loading, and analytical SQL.

@@ -10,8 +10,8 @@ Source: the five assessment photographs supplied on 14 September 2026. This is a
 | A2 | Cover transactional databases, clickstream, and CRM | Source routes and source integration assumptions | Routes selected (003–005); source compatibility and CRM export interface unresolved |
 | A3 | Consider real-time ingestion and batch processing | Explanation of which sources use each route and why | Mixed approach accepted; numeric targets open |
 | A4 | Include services such as Pub/Sub, Dataflow, BigQuery, Cloud Storage, and Composer | Explain each service's role and alternatives | Roles and alternatives recorded, including Composer (006); deployment details open |
-| A5 | Make data available to analysts and machine learning models | Curated consumption layer in the diagram | Detailed serving needs unresolved |
-| A6 | Justify scalability, cost-efficiency, and security | Decision records and operational controls | Pending |
+| A5 | Make data available to analysts and machine learning models | Curated consumption layer in the diagram | Analysts and offline ML use curated tables; online serving excluded |
+| A6 | Justify scalability, cost-efficiency, and security | Decision records and operational controls | Design controls in operations.md; thresholds and sizing unverified |
 | A7 | Discuss latency, quality, and performance trade-offs | Consequences and revisit conditions in each decision | Started |
 | A8 | Optional, preferred infrastructure as code | Reproducible provisioning if included | Scope not yet chosen |
 
@@ -19,8 +19,8 @@ Source: the five assessment photographs supplied on 14 September 2026. This is a
 
 | ID | Requirement | Evidence we will produce | Status |
 | --- | --- | --- | --- |
-| B1 | Populate the provided ten customer orders in a CSV | Source fixture preserving the supplied values | Pending |
-| B2 | Read and clean with Python or Java | Python code with explicit quality rules | Python selected; code pending |
+| B1 | Populate the provided ten customer orders in a CSV | Source fixture preserving the supplied values | Transcribed in data/customer_orders.csv and checked against the photograph |
+| B2 | Read and clean with Python or Java | Python code with explicit quality rules | Read-only Python profiler implemented; cleaning pending |
 | B3 | Handle missing values, duplicates, invalid dates, and irregular types | Accepted/rejected outputs and meaningful tests | Policies pending |
 | B4 | Transform fields and standardise timestamps | Defined output schema and transformations | Pending |
 | B5 | Save cleaned data in Cloud Storage | Upload code and evidence of a successful run | Pending |
