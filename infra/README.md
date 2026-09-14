@@ -35,11 +35,11 @@ infra/
 From the repository root, for example:
 
 ```powershell
-terraform -chdir=infra/environments/dev init -backend-config=backend.hcl
-terraform -chdir=infra/environments/dev plan -out=changes.tfplan
+terraform '-chdir=infra/environments/dev' init '-backend-config=backend.hcl'
+terraform '-chdir=infra/environments/dev' plan '-out=changes.tfplan'
 # Inspect the plan's project, resource names, IAM changes, and replacements.
-terraform -chdir=infra/environments/dev apply changes.tfplan
-terraform -chdir=infra/environments/dev output
+terraform '-chdir=infra/environments/dev' apply changes.tfplan
+terraform '-chdir=infra/environments/dev' output
 ```
 
 Repeat with `pre` or `prod` only after supplying their separate configurations and reviewing their plans. Do not reuse the saved dev plan for another environment. Applying incurs cloud usage. Dev init, plan and apply have been run against GCP; see [live evidence](../docs/cloud-verification.md).
@@ -64,8 +64,8 @@ Uploaded objects become eligible for lifecycle deletion at the configured age. S
 
 ```powershell
 terraform fmt -check -recursive infra
-terraform -chdir=infra/environments/dev init -backend=false -input=false
-terraform -chdir=infra/environments/dev validate
+terraform '-chdir=infra/environments/dev' init -backend=false -input=false
+terraform '-chdir=infra/environments/dev' validate
 # Repeat init/validate for pre and prod.
 terraform -chdir=infra/modules/orders init -backend=false -input=false
 terraform -chdir=infra/modules/orders test
