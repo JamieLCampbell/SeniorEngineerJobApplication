@@ -3,10 +3,13 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
 
+from .calculations import total_order_value
+
 from .parsing import parse_amount, parse_order_date, parse_positive_integer, parse_region
 
 
 FIELDS = ("OrderID", "CustomerID", "OrderRegion", "OrderDate", "OrderAmount", "ProductID", "Quantity")
+OUTPUT_FIELDS = FIELDS + ("TotalOrderValue",)
 PARSERS = {
     "OrderID": parse_positive_integer,
     "CustomerID": parse_positive_integer,
@@ -16,7 +19,7 @@ PARSERS = {
     "ProductID": parse_positive_integer,
     "Quantity": lambda value: parse_positive_integer(value, {"three": "3"}),
 }
-OPTIONAL = {"ProductID", "Quantity"}
+OPTIONAL = {"ProductID"}
 
 
 @dataclass
@@ -61,6 +64,14 @@ def clean_row(raw: dict, source_row: int) -> Record:
         except ValueError as error:
             record.values[name] = None
             record.reasons.append(f"{name}:{error}")
+    record.values["TotalOrderValue"] = None
+    if record.values["OrderAmount"] is not None and record.values["Quantity"] is not None:
+        try:
+            record.values["TotalOrderValue"] = total_order_value(
+                record.values["OrderAmount"], record.values["Quantity"],
+            )
+        except ValueError as error:
+            record.reasons.append(f"TotalOrderValue:{error}")
     return record
 
 

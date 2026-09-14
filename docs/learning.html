@@ -37,12 +37,22 @@
     <p class="muted">YOUR PROJECT LEARNING COMPANION</p>
     <h1>Understand the decisions<br>as we make them</h1>
     <p>Work through one decision at a time. Explore alternatives, explain the consequences in your own words, then discuss what belongs in the project.</p>
-    <p class="status">Python cleaning is implemented: 6 accepted and 4 rejected sample orders. Metric definitions and cloud execution are still pending.</p>
+    <p class="status">Python cleaning is implemented: 6 accepted and 4 rejected sample orders. Order totals and spending SQL are implemented and tested locally. Cloud execution remains pending.</p>
     <nav class="links" aria-label="Notebook sections">
-      <a href="#cleaning">Latest: Python cleaning</a><a href="#terraform">Dev/pre/prod</a><a href="#operations">Operating controls</a><a href="#orchestration">Orchestration</a><a href="#crm">CRM batches</a><a href="#clickstream">Clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
+      <a href="#spending">Latest: spending calculations</a><a href="#cleaning">Python cleaning</a><a href="#terraform">Dev/pre/prod</a><a href="#operations">Operating controls</a><a href="#orchestration">Orchestration</a><a href="#crm">CRM batches</a><a href="#clickstream">Clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
     </nav>
   </header>
   <main>
+    <section id="spending">
+      <h2>What does a 30-day average actually mean?</h2>
+      <p>First calculate each accepted order's total: unit price multiplied by quantity. Order 104 is 350 × 4 = 1400. Missing quantity cannot become one without inventing a fact.</p>
+      <details><summary>Why use a calendar range?</summary><p>On 30 January, include 1–30 January. On 31 January, include 2–31 January. A window of 30 rows would count orders instead of days: a busy customer could have 30 orders in one afternoon.</p></details>
+      <details><summary>What is the denominator?</summary><p>We chose the number of accepted orders in that period. Two orders worth 100 and 200 give an average order value of 150. Average daily spending is a different question: it would require a calendar and a decision about days without purchases.</p></details>
+      <details><summary>Why include all orders on the same date?</summary><p>The source has no time of day. We cannot say which purchase happened first, so every order on that date sees the same window and average.</p></details>
+      <p><strong>Check:</strong> London has accepted totals of 1400 and 2910. What is its average, and can we call this complete revenue?</p>
+      <details><summary>Reveal the answer</summary><p>The average is 2155. It describes accepted orders only; rejected records mean reporting coverage is incomplete. Regional SQL includes an accepted-order count to make the denominator visible.</p></details>
+      <p><a href="spending-metrics.md">Read the definitions, SQL links and validation limits</a>.</p>
+    </section>
     <section id="source-corrections">
       <h2>Quarantine and ask the source owner</h2>
       <p>Our preferred production response is to enforce an agreed source contract and request corrections upstream. For this assessment, we also demonstrate controlled downstream repair with explicit mappings for known phrases.</p>
@@ -57,19 +67,19 @@
       <h2>Spending: an assumption to confirm</h2>
       <p>For the assessment, we assume <strong>OrderAmount is the product's unit price</strong>, so total order value is OrderAmount multiplied by Quantity.</p>
       <p><strong>In a real project, we would confirm this with the stakeholder or source-system owner before reporting.</strong> The sample alone does not prove the meaning. We would also ask how discounts, tax, shipping and refunds are represented.</p>
-      <p>If the field is already the order total, multiplying it would overstate spending. Missing quantity must remain unresolved rather than default to one. These are recorded definitions; the code changes are next.</p>
+      <p>If the field is already the order total, multiplying it would overstate spending. Missing quantity must remain unresolved rather than default to one. The cleaner now requires quantity and calculates an exact total under this assumption.</p>
       <p><a href="spending-metrics.md">Read the assumptions and agreed metric definitions</a>.</p>
     </section>
     <section id="cleaning">
       <h2>Python cleaning: convert evidence, preserve uncertainty</h2>
       <p>The functions now parse fields, validate rows, and handle repeated IDs separately from reading and writing files. The same cleaner can later feed a cloud upload without duplicating the rules.</p>
       <details><summary>Why reject unknown dates and amounts?</summary><p>We cannot recover them from the sample. Setting an amount to zero invents a free order; choosing a date invents when it happened. We preserve the original record and reasons outside the accepted dataset. The resulting analysis covers accepted records, not all sales.</p></details>
-      <details><summary>Why are missing product IDs allowed?</summary><p>The supplied order amount and region can still be preserved without knowing the product. We keep a null and a warning. Quantity is also optional for now, but if we later decide total value must be calculated as unit amount times quantity, that rule needs revisiting.</p></details>
+      <details><summary>Why are missing product IDs allowed?</summary><p>The supplied order amount and region can still be preserved without knowing the product. We keep a null and a warning. Quantity is required because total value is calculated as unit price times quantity.</p></details>
       <details><summary>Why separate parsing from cleaning?</summary><p>A parser answers “can this value become a valid number or date?” The cleaner answers “does this order meet our acceptance rules?” File handling answers “how do we read and save it?” Those are reusable responsibilities without a large framework.</p></details>
       <details><summary>Why not keep the last version of an order?</summary><p>The source has no update timestamp. File order is not reliable evidence of which conflicting version is correct. We reject every version of a conflicting ID, but remove valid equivalent repeats with a record of what was retained.</p></details>
       <p><strong>Check your understanding:</strong> orders 101 and 106 have the same customer, date, product, quantity, region and amount. Should the cleaner delete 106?</p>
       <details><summary>Reveal the answer</summary><p>No. Their IDs differ; the customer may have made the same purchase twice. Our result keeps both. A source guarantee establishing that these are duplicates would justify a different policy.</p></details>
-      <p>The supplied sample produces <strong>6 accepted, 4 rejected, and 0 removed duplicates</strong>. Two accepted records have missing-product warnings. No total is calculated until the meaning of OrderAmount is agreed.</p>
+      <p>The supplied sample produces <strong>6 accepted, 4 rejected, and 0 removed duplicates</strong>. Two accepted records have missing-product warnings. Totals use our explicit unit-price assumption, which would need stakeholder confirmation before real reporting.</p>
       <p><a href="cleaning.md">Read the rules and reusable-code examples</a> · <a href="../orders/cleaning.py">Read the cleaner</a>.</p>
     </section>
     <section id="terraform">

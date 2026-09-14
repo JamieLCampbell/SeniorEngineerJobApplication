@@ -54,7 +54,7 @@ The loader can manage objects in its own data bucket, edit its dataset, and crea
 
 ## Data and deletion choices
 
-The schema preserves the supplied column names. Date-only input maps to `DATE`, money to exact `NUMERIC`, and integral identifiers/quantity to `INTEGER`. Fields remain nullable until cleaning acceptance rules are agreed. The schema does not settle whether OrderAmount means unit price or total, or imply that every nullable record should enter every metric.
+The schema preserves the supplied column names. Date-only input maps to `DATE`, money to exact `NUMERIC`, and integral identifiers/quantity to `INTEGER`. The schema includes derived TotalOrderValue as NUMERIC. Fields remain nullable at storage level; the Python cleaner enforces required metric fields, including quantity and total. OrderAmount is assumed to be unit price for this assessment, subject to stakeholder confirmation. Load only accepted cleaner output into the analytical table.
 
 There is no partitioning for a ten-row demonstration and no automatic table expiry. All environments disable bucket force deletion and dataset contents deletion. Pre/prod additionally prevent bucket deletion through the provider and enable table deletion protection. These are Terraform safeguards, not protection against authorised SQL/API deletion or lifecycle expiry. A deliberate teardown or schema replacement may require changing the guards, applying that change, and reviewing data preservation first.
 

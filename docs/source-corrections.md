@@ -17,7 +17,7 @@ Unknown prices or dates cannot be repaired without evidence. Defaulting to zero,
 
 Each CLI run writes a new local output directory. `cleaned_orders.csv` contains accepted rows only. `rejected.jsonl` retains the original fields, source record number, all detected rejection reasons, and warnings. `duplicates.jsonl` separately records removed valid repeats. Input is never overwritten.
 
-For the current sample, quarantine contains 102 and 110 (missing amount), and 103 and 108 (invalid date); 103 also has a missing-quantity warning. Orders 104 and 109 remain accepted with missing-product warnings. The unit-price decision will make quantity mandatory for spending in the next code change; that is not yet enforced.
+For the current sample, quarantine contains 102 and 110 (missing amount), and 103 and 108 (invalid date); 103 also has a missing-quantity rejection reason. Orders 104 and 109 remain accepted with missing-product warnings. Quantity is mandatory because the unit-price assumption requires it to calculate spending.
 
 This is logical separation on local disk, not an enforced security boundary. The proposed cloud extension is a restricted quarantine location with explicit retention and an operations-only identity. Do not upload the entire output directory to the analyst-facing destination. Cloud quarantine, its IAM, and automated incident integration are not implemented by the current Terraform.
 

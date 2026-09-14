@@ -26,7 +26,7 @@ Use small commits representing complete changes. Subjects describe the change; b
 
 [Source correction versus downstream repair](docs/source-corrections.md): each cleaning run quarantines rejected rows locally and creates a draft fix request. Submission to a source owner remains manual; no tickets or messages are sent automatically.
 
-[Spending assumptions](docs/spending-metrics.md): treat OrderAmount as unit price for this assessment; in real work, confirm this with a stakeholder before reporting. The cleaner and SQL still need the corresponding total-value changes.
+[Spending assumptions](docs/spending-metrics.md): treat OrderAmount as unit price for this assessment; in real work, confirm this with a stakeholder before reporting. The cleaner now derives exact totals and requires quantity; the spending SQL is tested locally.
 
 Inspect the supplied data without changing it:
 
@@ -36,7 +36,7 @@ python -m orders data/customer_orders.csv --output-dir outputs/cleaning-v1
 python -m unittest discover -s tests -v
 ```
 
-These commands use only Python's standard library. The source CSV preserves the supplied errors. Use a new output directory for each cleaning run. [Cleaning rules and outputs](docs/cleaning.md) explain six accepted/four rejected sample records and the reusable functions. Cloud upload, loading, and final metrics are still to build. [Operating controls](docs/operations.md) cover the architecture's access, monitoring, recovery, and cost decisions.
+These commands use only Python's standard library. The source CSV preserves the supplied errors. Use a new output directory for each cleaning run. [Cleaning rules and outputs](docs/cleaning.md) explain six accepted/four rejected sample records and the reusable functions. The rolling and regional SQL are implemented with local semantic tests; Cloud Storage upload and BigQuery loading/execution remain to build. [Operating controls](docs/operations.md) cover the architecture's access, monitoring, recovery, and cost decisions.
 
 - Part 1: discuss assumptions, compare architecture options, then produce a diagram and decision record.
 - Part 2: build and verify Python cleaning, Cloud Storage output, BigQuery loading, and analytical SQL.

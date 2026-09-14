@@ -13,4 +13,15 @@ Under this assumption:
 
 If the stakeholder confirms that `OrderAmount` is already the total, use it directly instead of multiplying; update the transformation, tests and metric documentation together.
 
-Implementation status: these definitions are recorded. The current cleaner still preserves the supplied amount, permits missing quantity with a warning, and does not derive a total. Updating those rules and implementing/testing the spending SQL are the next tasks.
+## Implementation and evidence
+
+The cleaner now requires quantity and appends exact `TotalOrderValue`, rejecting overflow rather than rounding. Original `OrderAmount` remains available.
+
+- [Customer rolling SQL](../sql/customer_rolling_spending.sql) returns a metric on each order date. `RANGE BETWEEN 29 PRECEDING AND CURRENT ROW` over `UNIX_DATE(OrderDate)` uses calendar days and includes same-date peers. There are no generated rows for days without orders.
+- [Regional SQL](../sql/regional_spending.sql) averages accepted order totals and includes an order count. It does not average customer averages.
+
+Replace `PROJECT_ID.DATASET_ID` with the deployed destination before executing. Input must be the accepted, deduplicated cleaner output. For the sample, regional average order values are London 2155, Yorkshire 150, and Tyne & Wear 100 (two accepted orders each).
+
+Tests execute the SQL in SQLite with a UNIX_DATE compatibility function. They cover the inclusive 30-day boundary, same-date peers, customer isolation, gaps, order weighting, ties and empty input. This checks small-fixture semantics, not BigQuery NUMERIC behaviour or cloud execution. Python tests independently check exact totals and numeric overflow. BigQuery loading and execution remain pending.
+
+The calendar-window syntax follows the [BigQuery window function documentation](https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/window-function-calls).

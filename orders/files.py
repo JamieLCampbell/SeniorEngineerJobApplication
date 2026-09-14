@@ -5,7 +5,7 @@ import json
 from decimal import Decimal
 from pathlib import Path
 
-from .cleaning import FIELDS
+from .cleaning import FIELDS, OUTPUT_FIELDS
 
 
 def read_orders(path: Path) -> list:
@@ -23,7 +23,7 @@ def write_result(result, directory: Path, source_name: str | None = None):
     # One new directory per run: an accidental rerun must not overwrite evidence.
     directory.mkdir(parents=True, exist_ok=False)
     with (directory / "cleaned_orders.csv").open("w", encoding="utf-8", newline="") as output:
-        writer = csv.DictWriter(output, fieldnames=FIELDS)
+        writer = csv.DictWriter(output, fieldnames=OUTPUT_FIELDS)
         writer.writeheader()
         writer.writerows({
             key: format(value, "f") if isinstance(value, Decimal) else value
