@@ -37,12 +37,24 @@
     <p class="muted">YOUR PROJECT LEARNING COMPANION</p>
     <h1>Understand the decisions<br>as we make them</h1>
     <p>Work through one decision at a time. Explore alternatives, explain the consequences in your own words, then discuss what belongs in the project.</p>
-    <p class="status">Terraform now defines dev/pre/prod for the batch foundation. Configurations are tested locally; no environments are deployed.</p>
+    <p class="status">Python cleaning is implemented: 6 accepted and 4 rejected sample orders. Metric definitions and cloud execution are still pending.</p>
     <nav class="links" aria-label="Notebook sections">
-      <a href="#terraform">Latest: dev/pre/prod</a><a href="#operations">Operating controls</a><a href="#orchestration">Orchestration</a><a href="#crm">CRM batches</a><a href="#clickstream">Clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
+      <a href="#cleaning">Latest: Python cleaning</a><a href="#terraform">Dev/pre/prod</a><a href="#operations">Operating controls</a><a href="#orchestration">Orchestration</a><a href="#crm">CRM batches</a><a href="#clickstream">Clickstream</a><a href="#cdc">CDC</a><a href="#problem">Freshness</a><a href="#options">Try alternatives</a><a href="#challenge">Check understanding</a><a href="#notes">Your reasoning</a>
     </nav>
   </header>
   <main>
+    <section id="cleaning">
+      <h2>Python cleaning: convert evidence, preserve uncertainty</h2>
+      <p>The functions now parse fields, validate rows, and handle repeated IDs separately from reading and writing files. The same cleaner can later feed a cloud upload without duplicating the rules.</p>
+      <details><summary>Why reject unknown dates and amounts?</summary><p>We cannot recover them from the sample. Setting an amount to zero invents a free order; choosing a date invents when it happened. We preserve the original record and reasons outside the accepted dataset. The resulting analysis covers accepted records, not all sales.</p></details>
+      <details><summary>Why are missing product IDs allowed?</summary><p>The supplied order amount and region can still be preserved without knowing the product. We keep a null and a warning. Quantity is also optional for now, but if we later decide total value must be calculated as unit amount times quantity, that rule needs revisiting.</p></details>
+      <details><summary>Why separate parsing from cleaning?</summary><p>A parser answers “can this value become a valid number or date?” The cleaner answers “does this order meet our acceptance rules?” File handling answers “how do we read and save it?” Those are reusable responsibilities without a large framework.</p></details>
+      <details><summary>Why not keep the last version of an order?</summary><p>The source has no update timestamp. File order is not reliable evidence of which conflicting version is correct. We reject every version of a conflicting ID, but remove valid equivalent repeats with a record of what was retained.</p></details>
+      <p><strong>Check your understanding:</strong> orders 101 and 106 have the same customer, date, product, quantity, region and amount. Should the cleaner delete 106?</p>
+      <details><summary>Reveal the answer</summary><p>No. Their IDs differ; the customer may have made the same purchase twice. Our result keeps both. A source guarantee establishing that these are duplicates would justify a different policy.</p></details>
+      <p>The supplied sample produces <strong>6 accepted, 4 rejected, and 0 removed duplicates</strong>. Two accepted records have missing-product warnings. No total is calculated until the meaning of OrderAmount is agreed.</p>
+      <p><a href="cleaning.md">Read the rules and reusable-code examples</a> · <a href="../orders/cleaning.py">Read the cleaner</a>.</p>
+    </section>
     <section id="terraform">
       <h2>Terraform: repeat the design safely</h2>
       <p>Terraform describes the resources we want. A <strong>plan</strong> shows proposed changes; <strong>apply</strong> carries them out. We have written and locally tested the configuration, not applied it to GCP.</p>

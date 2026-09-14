@@ -20,9 +20,9 @@ Source: the five assessment photographs supplied on 14 September 2026. This is a
 | ID | Requirement | Evidence we will produce | Status |
 | --- | --- | --- | --- |
 | B1 | Populate the provided ten customer orders in a CSV | Source fixture preserving the supplied values | Transcribed in data/customer_orders.csv and checked against the photograph |
-| B2 | Read and clean with Python or Java | Python code with explicit quality rules | Read-only Python profiler implemented; cleaning pending |
-| B3 | Handle missing values, duplicates, invalid dates, and irregular types | Accepted/rejected outputs and meaningful tests | Policies pending |
-| B4 | Transform fields and standardise timestamps | Defined output schema and transformations | Pending |
+| B2 | Read and clean with Python or Java | Python code with explicit quality rules | Reusable standard-library Python cleaner and CLI implemented |
+| B3 | Handle missing values, duplicates, invalid dates, and irregular types | Accepted/rejected outputs and meaningful tests | Rules documented; sample produces 6 accepted, 4 rejected; local tests pass |
+| B4 | Transform fields and standardise timestamps | Defined output schema and transformations | Types normalised and source dates validated as DATE; derived amount semantics pending |
 | B5 | Save cleaned data in Cloud Storage | Upload code and evidence of a successful run | Pending |
 | B6 | Create a dataset/table and load from Cloud Storage | BigQuery schema, load procedure, and run evidence | Pending |
 | B7 | Calculate a rolling 30-day average of customer spending with a window function | SQL and checks against hand-calculated cases | Metric definition pending |

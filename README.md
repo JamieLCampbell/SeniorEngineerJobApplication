@@ -1,6 +1,6 @@
 # Senior Cloud Data Engineer assessment
 
-Working submission for the supplied GCP assessment. The architecture draft records our choices; Part 2 has started with source-data profiling in Python.
+Working submission for the supplied GCP assessment. The architecture draft records our choices; Part 2 includes Python profiling and cleaning.
 
 ## Work through the project
 
@@ -28,10 +28,11 @@ Inspect the supplied data without changing it:
 
 ```sh
 python scripts/profile_orders.py
+python -m orders data/customer_orders.csv --output-dir outputs/cleaning-v1
 python -m unittest discover -s tests -v
 ```
 
-These commands use only Python's standard library. The CSV preserves the supplied errors. The profiler is not the cleaning pipeline; transformation, upload, and final SQL are still to build. [Operating controls](docs/operations.md) cover the architecture's access, monitoring, recovery, and cost decisions.
+These commands use only Python's standard library. The source CSV preserves the supplied errors. Use a new output directory for each cleaning run. [Cleaning rules and outputs](docs/cleaning.md) explain six accepted/four rejected sample records and the reusable functions. Cloud upload, loading, and final metrics are still to build. [Operating controls](docs/operations.md) cover the architecture's access, monitoring, recovery, and cost decisions.
 
 - Part 1: discuss assumptions, compare architecture options, then produce a diagram and decision record.
 - Part 2: build and verify Python cleaning, Cloud Storage output, BigQuery loading, and analytical SQL.
