@@ -1,6 +1,6 @@
 # Senior Cloud Data Engineer assessment
 
-Working submission for the supplied GCP assessment. The architecture draft records our choices; Part 2 includes Python profiling and cleaning.
+Working submission for the supplied GCP assessment. The architecture draft records our choices; Part 2 includes Python cleaning and a verified Cloud Storage-to-BigQuery dev batch.
 
 ## Work through the project
 
@@ -26,7 +26,7 @@ Use small commits representing complete changes. Subjects describe the change; b
 
 [Source correction versus downstream repair](docs/source-corrections.md): each cleaning run quarantines rejected rows locally and creates a draft fix request. Submission to a source owner remains manual; no tickets or messages are sent automatically.
 
-[Spending assumptions](docs/spending-metrics.md): treat OrderAmount as unit price for this assessment; in real work, confirm this with a stakeholder before reporting. The cleaner now derives exact totals and requires quantity; the spending SQL is tested locally.
+[Spending assumptions](docs/spending-metrics.md): treat OrderAmount as unit price for this assessment; in real work, confirm this with a stakeholder before reporting. The cleaner now derives exact totals and requires quantity; the spending SQL is tested locally and in BigQuery.
 
 Inspect the supplied data without changing it:
 
@@ -36,10 +36,10 @@ python -m orders data/customer_orders.csv --output-dir outputs/cleaning-v1
 python -m unittest discover -s tests -v
 ```
 
-These commands use only Python's standard library. The source CSV preserves the supplied errors. Use a new output directory for each cleaning run. [Cleaning rules and outputs](docs/cleaning.md) explain six accepted/four rejected sample records and the reusable functions. The rolling and regional SQL are implemented with local semantic tests; Cloud Storage upload and BigQuery loading/execution remain to build. [Operating controls](docs/operations.md) cover the architecture's access, monitoring, recovery, and cost decisions.
+The cleaner and local SQL tests use Python's standard library. Install requirements-cloud.txt to include the cloud request tests. The source CSV preserves the supplied errors. Use a new output directory for each cleaning run. [Cleaning rules and outputs](docs/cleaning.md) explain six accepted/four rejected sample records and the reusable functions. The rolling and regional SQL, Cloud Storage upload and BigQuery load have passed two live dev runs. See the [cloud run guide](docs/cloud-run.md) and [verification evidence](docs/cloud-verification.md). [Operating controls](docs/operations.md) cover the architecture's access, monitoring, recovery, and cost decisions.
 
 - Part 1: discuss assumptions, compare architecture options, then produce a diagram and decision record.
 - Part 2: build and verify Python cleaning, Cloud Storage output, BigQuery loading, and analytical SQL.
-- [Terraform dev/pre/prod](infra/README.md): shared Part 2 infrastructure module with separate environment roots and state. Validated locally; not deployed.
+- [Terraform dev/pre/prod](infra/README.md): shared Part 2 infrastructure module with separate environment roots and state. Dev deployed and verified; pre/prod validated locally only.
 
-No cloud resources have been provisioned by this repository. Cloud execution and streaming behaviour have not been validated. Completed changes are pushed to the private [GitHub repository](https://github.com/JamieLCampbell/SeniorEngineerJobApplication) on `codex/architecture-learning`.
+Dev storage, BigQuery and scoped loader IAM are deployed in London. Two live batch runs passed with six orders after replacement; Terraform reports no drift. Streaming behaviour remains unvalidated. Completed changes are pushed to the private [GitHub repository](https://github.com/JamieLCampbell/SeniorEngineerJobApplication) on `codex/architecture-learning`.

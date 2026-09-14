@@ -29,4 +29,4 @@ This is logical separation on local disk, not an enforced security boundary. The
 4. Run the corrected export through the same validation into a new run directory. Link the old and new runs to the ticket, check the affected IDs and counts, and publish through a replacement/upsert process that cannot double-count an earlier accepted order.
 5. Close the request after revalidation and reconciliation succeed, not merely because the source says it is fixed. Until then, expose the rejected count and report coverage.
 
-Ticket submission, ownership tracking, corrected-export lineage and cloud publication are manual/planned steps. The executable scope is quarantine files plus a draft handoff artifact; no automated request tracking or replay service is claimed.
+Ticket submission, ownership tracking and corrected-export lineage remain manual/planned steps. The dev CLI now publishes accepted snapshots to Cloud Storage and BigQuery; linking corrected runs to tickets remains manual. The executable scope is quarantine files plus a draft handoff artifact; no automated request tracking or replay service is claimed.

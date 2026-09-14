@@ -22,6 +22,6 @@ The cleaner now requires quantity and appends exact `TotalOrderValue`, rejecting
 
 Replace `PROJECT_ID.DATASET_ID` with the deployed destination before executing. Input must be the accepted, deduplicated cleaner output. For the sample, regional average order values are London 2155, Yorkshire 150, and Tyne & Wear 100 (two accepted orders each).
 
-Tests execute the SQL in SQLite with a UNIX_DATE compatibility function. They cover the inclusive 30-day boundary, same-date peers, customer isolation, gaps, order weighting, ties and empty input. This checks small-fixture semantics, not BigQuery NUMERIC behaviour or cloud execution. Python tests independently check exact totals and numeric overflow. BigQuery loading and execution remain pending.
+Tests execute the SQL in SQLite with a UNIX_DATE compatibility function. They cover the inclusive 30-day boundary, same-date peers, customer isolation, gaps, order weighting, ties and empty input. This checks small-fixture semantics, not BigQuery NUMERIC behaviour or cloud execution. Python tests independently check exact totals and numeric overflow. Two live BigQuery runs now also verify the sample, calendar boundaries and NUMERIC arithmetic; see [cloud evidence](cloud-verification.md).
 
 The calendar-window syntax follows the [BigQuery window function documentation](https://docs.cloud.google.com/bigquery/docs/reference/standard-sql/window-function-calls).

@@ -1,6 +1,6 @@
 # Cleaning the supplied orders
 
-Use small parsing functions, a row/batch cleaner, and separate file handling. All code uses Python's standard library. Cloud upload will call these functions rather than embed another set of cleaning rules.
+Use small parsing functions, a row/batch cleaner, and separate file handling. The cleaner uses Python's standard library. The cloud module reuses these functions and adds the official Google Cloud clients.
 
 ```powershell
 python -m orders data/customer_orders.csv --output-dir outputs/cleaning-v1
@@ -47,7 +47,7 @@ See [source correction and optional repair](source-corrections.md) for the prefe
 
 Ten inputs produce six accepted orders (101, 104, 105, 106, 107, 109), four rejected (102, 103, 108, 110), and no removed duplicates. Orders 104 and 109 have missing-product warnings. Rejections preserve missing amounts, unusable dates, and the missing quantity rejection reason on 103. A parsed `Three` on rejected order 108 does not make its unknown date valid.
 
-Tests cover those independently enumerated outcomes, unchanged input, optional fields, both conflict orderings, semantic duplicates, ambiguous/invalid dates, exact numeric limits, malformed input, and file outputs. This is local cleaning evidence; SQL semantics are tested locally; BigQuery loading and execution remain pending.
+Tests cover those independently enumerated outcomes, unchanged input, optional fields, both conflict orderings, semantic duplicates, ambiguous/invalid dates, exact numeric limits, malformed input, and file outputs. Local tests are complemented by two verified BigQuery load/query runs; see [cloud evidence](cloud-verification.md).
 
 ## Reuse
 

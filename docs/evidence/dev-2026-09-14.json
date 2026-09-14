@@ -1,0 +1,307 @@
+{
+  "date": "2026-09-14",
+  "runs": [
+    {
+      "run": {
+        "status": "complete",
+        "run_id": "c77a98f9758e43f9973cbd0ed39ce981",
+        "project": "data-enginner-job-app",
+        "location": "europe-west2",
+        "table": "data-enginner-job-app.orders_dev.cleaned_orders",
+        "service_account": "orders-loader-dev@data-enginner-job-app.iam.gserviceaccount.com",
+        "counts": {
+          "input_rows": 10,
+          "accepted_rows": 6,
+          "rejected_rows": 4,
+          "duplicate_rows": 0,
+          "warnings": [
+            {
+              "source_row": 5,
+              "order_id": 104,
+              "warnings": [
+                "ProductID:missing"
+              ]
+            },
+            {
+              "source_row": 10,
+              "order_id": 109,
+              "warnings": [
+                "ProductID:missing"
+              ]
+            }
+          ]
+        },
+        "uri": "gs://data-enginner-job-app-orders-dev/accepted/c77a98f9758e43f9973cbd0ed39ce981/cleaned_orders.csv",
+        "load_job_id": "31b29ea0-02f4-4bf9-a40b-b2d167109f39",
+        "loaded_rows": 6,
+        "queries": {
+          "customer_rolling_spending": {
+            "job_id": "50387328-4177-4007-9bd0-3ae836e0a738",
+            "estimated_bytes": 240,
+            "bytes_processed": 240,
+            "bytes_billed": 10485760,
+            "maximum_bytes_billed": 10485760
+          },
+          "regional_spending": {
+            "job_id": "61e837ec-c345-4c32-8ef5-e964ce498e79",
+            "estimated_bytes": 160,
+            "bytes_processed": 160,
+            "bytes_billed": 10485760,
+            "maximum_bytes_billed": 10485760
+          }
+        }
+      },
+      "verification": {
+        "status": "passed",
+        "checks": [
+          "six exact stored totals",
+          "regional averages and counts",
+          "sample rolling averages",
+          "calendar boundary, peers, gaps and customer isolation",
+          "NUMERIC precision"
+        ],
+        "queries": {
+          "stored_orders": {
+            "job_id": "0cbe20aa-2b83-418d-af3d-bf096f1fd08c",
+            "estimated_bytes": 144,
+            "bytes_processed": 144,
+            "bytes_billed": 10485760,
+            "maximum_bytes_billed": 10485760
+          },
+          "calendar_boundary": {
+            "job_id": "0bd4ce01-7a56-4624-9d14-d36f5aae94ea",
+            "estimated_bytes": 0,
+            "bytes_processed": 0,
+            "bytes_billed": 0,
+            "maximum_bytes_billed": 10485760
+          },
+          "numeric_precision": {
+            "job_id": "e29a8ad2-a7f6-4054-9f8d-7f7bc97bb79e",
+            "estimated_bytes": 0,
+            "bytes_processed": 0,
+            "bytes_billed": 0,
+            "maximum_bytes_billed": 10485760
+          }
+        }
+      },
+      "regional_results": [
+        {
+          "OrderRegion": "London",
+          "AcceptedOrderCount": 2,
+          "AverageOrderValue": "2155"
+        },
+        {
+          "OrderRegion": "Yorkshire",
+          "AcceptedOrderCount": 2,
+          "AverageOrderValue": "150"
+        },
+        {
+          "OrderRegion": "Tyne & Wear",
+          "AcceptedOrderCount": 2,
+          "AverageOrderValue": "100"
+        }
+      ],
+      "rolling_results": [
+        {
+          "OrderID": 101,
+          "CustomerID": 1,
+          "OrderDate": "2023-07-01",
+          "TotalOrderValue": "150",
+          "OrdersInWindow": 2,
+          "AverageOrderValue30Days": "150"
+        },
+        {
+          "OrderID": 106,
+          "CustomerID": 1,
+          "OrderDate": "2023-07-01",
+          "TotalOrderValue": "150",
+          "OrdersInWindow": 2,
+          "AverageOrderValue30Days": "150"
+        },
+        {
+          "OrderID": 105,
+          "CustomerID": 2,
+          "OrderDate": "2023-07-03",
+          "TotalOrderValue": "100",
+          "OrdersInWindow": 2,
+          "AverageOrderValue30Days": "100"
+        },
+        {
+          "OrderID": 107,
+          "CustomerID": 2,
+          "OrderDate": "2023-07-03",
+          "TotalOrderValue": "100",
+          "OrdersInWindow": 2,
+          "AverageOrderValue30Days": "100"
+        },
+        {
+          "OrderID": 104,
+          "CustomerID": 3,
+          "OrderDate": "2023-07-05",
+          "TotalOrderValue": "1400",
+          "OrdersInWindow": 2,
+          "AverageOrderValue30Days": "2155"
+        },
+        {
+          "OrderID": 109,
+          "CustomerID": 3,
+          "OrderDate": "2023-07-05",
+          "TotalOrderValue": "2910",
+          "OrdersInWindow": 2,
+          "AverageOrderValue30Days": "2155"
+        }
+      ]
+    },
+    {
+      "run": {
+        "status": "complete",
+        "run_id": "d47e810c765e4a3a91fa18b73af349a1",
+        "project": "data-enginner-job-app",
+        "location": "europe-west2",
+        "table": "data-enginner-job-app.orders_dev.cleaned_orders",
+        "service_account": "orders-loader-dev@data-enginner-job-app.iam.gserviceaccount.com",
+        "counts": {
+          "input_rows": 10,
+          "accepted_rows": 6,
+          "rejected_rows": 4,
+          "duplicate_rows": 0,
+          "warnings": [
+            {
+              "source_row": 5,
+              "order_id": 104,
+              "warnings": [
+                "ProductID:missing"
+              ]
+            },
+            {
+              "source_row": 10,
+              "order_id": 109,
+              "warnings": [
+                "ProductID:missing"
+              ]
+            }
+          ]
+        },
+        "uri": "gs://data-enginner-job-app-orders-dev/accepted/d47e810c765e4a3a91fa18b73af349a1/cleaned_orders.csv",
+        "load_job_id": "a169f381-2304-4c4c-8f09-5b096173ec11",
+        "loaded_rows": 6,
+        "queries": {
+          "customer_rolling_spending": {
+            "job_id": "76e94962-7479-4cac-9d08-f4a8e6d153e5",
+            "estimated_bytes": 240,
+            "bytes_processed": 240,
+            "bytes_billed": 10485760,
+            "maximum_bytes_billed": 10485760
+          },
+          "regional_spending": {
+            "job_id": "133e2cf2-826d-4f1e-bf2e-6424b8909967",
+            "estimated_bytes": 160,
+            "bytes_processed": 160,
+            "bytes_billed": 10485760,
+            "maximum_bytes_billed": 10485760
+          }
+        }
+      },
+      "verification": {
+        "status": "passed",
+        "checks": [
+          "six exact stored totals",
+          "regional averages and counts",
+          "sample rolling averages",
+          "calendar boundary, peers, gaps and customer isolation",
+          "NUMERIC precision"
+        ],
+        "queries": {
+          "stored_orders": {
+            "job_id": "1f0d517e-a4ee-4e52-b028-c88d2ad53db5",
+            "estimated_bytes": 144,
+            "bytes_processed": 144,
+            "bytes_billed": 10485760,
+            "maximum_bytes_billed": 10485760
+          },
+          "calendar_boundary": {
+            "job_id": "6cb0b29f-696b-4ada-a87d-83036a4ec5b4",
+            "estimated_bytes": 0,
+            "bytes_processed": 0,
+            "bytes_billed": 0,
+            "maximum_bytes_billed": 10485760
+          },
+          "numeric_precision": {
+            "job_id": "34bc99ec-e4d0-4239-907a-f078a543e0d0",
+            "estimated_bytes": 0,
+            "bytes_processed": 0,
+            "bytes_billed": 0,
+            "maximum_bytes_billed": 10485760
+          }
+        }
+      },
+      "regional_results": [
+        {
+          "OrderRegion": "London",
+          "AcceptedOrderCount": 2,
+          "AverageOrderValue": "2155"
+        },
+        {
+          "OrderRegion": "Yorkshire",
+          "AcceptedOrderCount": 2,
+          "AverageOrderValue": "150"
+        },
+        {
+          "OrderRegion": "Tyne & Wear",
+          "AcceptedOrderCount": 2,
+          "AverageOrderValue": "100"
+        }
+      ],
+      "rolling_results": [
+        {
+          "OrderID": 101,
+          "CustomerID": 1,
+          "OrderDate": "2023-07-01",
+          "TotalOrderValue": "150",
+          "OrdersInWindow": 2,
+          "AverageOrderValue30Days": "150"
+        },
+        {
+          "OrderID": 106,
+          "CustomerID": 1,
+          "OrderDate": "2023-07-01",
+          "TotalOrderValue": "150",
+          "OrdersInWindow": 2,
+          "AverageOrderValue30Days": "150"
+        },
+        {
+          "OrderID": 105,
+          "CustomerID": 2,
+          "OrderDate": "2023-07-03",
+          "TotalOrderValue": "100",
+          "OrdersInWindow": 2,
+          "AverageOrderValue30Days": "100"
+        },
+        {
+          "OrderID": 107,
+          "CustomerID": 2,
+          "OrderDate": "2023-07-03",
+          "TotalOrderValue": "100",
+          "OrdersInWindow": 2,
+          "AverageOrderValue30Days": "100"
+        },
+        {
+          "OrderID": 104,
+          "CustomerID": 3,
+          "OrderDate": "2023-07-05",
+          "TotalOrderValue": "1400",
+          "OrdersInWindow": 2,
+          "AverageOrderValue30Days": "2155"
+        },
+        {
+          "OrderID": 109,
+          "CustomerID": 3,
+          "OrderDate": "2023-07-05",
+          "TotalOrderValue": "2910",
+          "OrdersInWindow": 2,
+          "AverageOrderValue30Days": "2155"
+        }
+      ]
+    }
+  ]
+}

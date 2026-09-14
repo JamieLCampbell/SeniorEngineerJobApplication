@@ -1,6 +1,6 @@
 # Orders infrastructure: dev / pre / prod
 
-One shared module provisions the Part 2 foundation: Cloud Storage, a BigQuery dataset and `cleaned_orders` table, a loader service account with scoped access, and the required APIs. It does not deploy Datastream, Dataflow, Pub/Sub, or Composer. Three environment configurations exist; no environment has been applied.
+One shared module provisions the Part 2 foundation: Cloud Storage, a BigQuery dataset and `cleaned_orders` table, a loader service account with scoped access, and the required APIs. It does not deploy Datastream, Dataflow, Pub/Sub, or Composer. Three environment configurations exist; dev was applied and verified on 14 September 2026. Pre/prod are not deployed.
 
 ## Why three environments?
 
@@ -28,7 +28,7 @@ infra/
 
 1. Install Terraform 1.7 or newer, below 2.0. This change was checked with 1.16.2. Authenticate through `gcloud auth application-default login`; never put a key in tfvars.
 2. Supply an existing, billing-enabled project for the chosen environment. Project creation and billing are intentionally outside this module. Enable the Service Usage API as a bootstrap prerequisite. The deploy identity needs permission to enable the listed APIs, manage the bucket/dataset/table and service account, grant the listed IAM roles, and access its state bucket. The loader identity is not the deploy identity.
-3. Bootstrap a dedicated private Cloud Storage state bucket in that environment's project. Use uniform access, public access prevention, and object versioning. Grant only the appropriate deploy identities access. It must exist before `terraform init`; it cannot be created by the configuration whose state it stores. Do not use the orders data bucket or apply data-file expiry rules to state. This bootstrap step is not automated here.
+3. Bootstrap a dedicated private Cloud Storage state bucket in that environment's project. Use uniform access, public access prevention, and object versioning. Grant only the appropriate deploy identities access. It must exist before `terraform init`; it cannot be created by the configuration whose state it stores. Do not use the orders data bucket or apply data-file expiry rules to state. This bootstrap step is not automated here; the dev state bucket was created with the documented controls before the first apply.
 4. Copy `terraform.tfvars.example` to `terraform.tfvars` and `backend.hcl.example` to `backend.hcl` inside the chosen environment. Fill in the actual project and state bucket. Both local files are ignored by Git. Retain the fixed environment-specific prefix in `main.tf`.
 5. Confirm location and retention. `europe-west2` (London) is an assessment default for both data resources, not a residency requirement from the brief. Pre mirrors prod's structure and protections; differing non-production retention keeps synthetic files short-lived. Production retention must be agreed before apply.
 
@@ -42,7 +42,7 @@ terraform -chdir=infra/environments/dev apply changes.tfplan
 terraform -chdir=infra/environments/dev output
 ```
 
-Repeat with `pre` or `prod` only after supplying their separate configurations and reviewing their plans. Do not reuse the saved dev plan for another environment. Applying incurs cloud usage; the commands above have not been run against GCP.
+Repeat with `pre` or `prod` only after supplying their separate configurations and reviewing their plans. Do not reuse the saved dev plan for another environment. Applying incurs cloud usage. Dev init, plan and apply have been run against GCP; see [live evidence](../docs/cloud-verification.md).
 
 ## Promotion and boundaries
 
@@ -50,7 +50,7 @@ Validate and apply a Git revision in dev, run the Python load/query checks, then
 
 State lives in GCS, which supports locking. Do not commit state or saved plans; commit dependency lock files. Project and state-bucket access provide the actual environment boundary, and GCS versioning provides recovery from state mistakes.
 
-The loader can manage objects in its own data bucket, edit its dataset, and create BigQuery jobs in its project. It has no broad project Editor role or cross-environment grants. It is created without a private key. To use it locally later, explicitly grant the chosen developer permission to impersonate it; this module does not automatically grant that access. No analyst identities were supplied, so none are granted access here.
+The loader can manage objects in its own data bucket, edit its dataset, and create BigQuery jobs in its project. It has no broad project Editor role or cross-environment grants. It is created without a private key. To use it locally, explicitly grant the chosen developer permission to impersonate it; this module does not automatically grant that access. The current developer was granted Token Creator on the dev loader for the verified keyless batch runs. No analyst identities were supplied, so none are granted access here.
 
 ## Data and deletion choices
 
@@ -71,6 +71,6 @@ terraform -chdir=infra/modules/orders init -backend=false -input=false
 terraform -chdir=infra/modules/orders test
 ```
 
-The tests use a mocked Google provider: they verify planned configuration, not API permissions, globally unique bucket names, billing, quotas, or actual cloud behaviour. All three roots validated and all five mock tests passed. A credentialed plan and dev apply are still outstanding.
+The tests use a mocked Google provider: they verify planned configuration, not API permissions, globally unique bucket names, billing, quotas, or actual cloud behaviour. All three roots validated and all five mock tests passed. A credentialed dev plan/apply and two live pipeline runs also passed; a subsequent plan reported no changes.
 
 Sources: [GCS backend](https://developer.hashicorp.com/terraform/language/backend/gcs), [bucket resource](https://registry.terraform.io/providers/hashicorp/google/8.2.0/docs/resources/storage_bucket), [BigQuery table resource](https://registry.terraform.io/providers/hashicorp/google/8.2.0/docs/resources/bigquery_table).
